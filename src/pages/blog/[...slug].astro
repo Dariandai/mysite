@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await Astro.glob('../../content/posts/*.md');
+
+  return posts.map(post => {
+    const slug = post.file.split('/').pop().replace('.md', '');
+    return {
+      params: { slug },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+const { title, titleCn, date, description } = post.frontmatter;
+const { Content } = post;
+---
+
+<BaseLayout title={`${title} | Dar1an`} description={description}>
+  <article class="blog-post">
+    <header class="post-header">
+      <div class="post-date">{date.replace(/-/g, '.')}</div>
+      <h1 class="post-title">
+        <span class="en">{title}</span>
+        <span class="cn">{titleCn}</span>
+      </h1>
+    </header>
+
+    <div class="post-content">
+      <Content />
+    </div>
+
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    padding: 140px 10% 50px;
+    padding-left: 140px;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .post-header {
+    margin-bottom: 50px;
+  }
+
+  .post-content {
+    line-height: 1.9;
+    color: #ccc;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .post-content :global(p),
+  .post-content :global(h2),
+  .post-content :global(ul) {
+    max-width: 100%;
+  }
+
+  .post-date {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .post-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1.3;
+  }
+
+  .post-title .cn {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+
+  .post-content :global(p) {
+    margin-bottom: 1.5em;
+  }
+
+  .post-content :global(h2) {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 2em 0 1em;
+    color: var(--text-main);
+  }
+
+  .post-content :global(ul) {
+    margin: 1em 0 1.5em 2em;
+    list-style: disc;
+  }
+
+  .post-content :global(li) {
+    margin-bottom: 0.5em;
+  }
+
+  .post-footer {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  @media (max-width: 768px) {
+    .blog-post {
+      padding: 140px 5% 100px;
+      padding-left: 5%;
+    }
+
+    .post-header {
+      margin-bottom: 50px;
+    }
+
+    .post-date {
+      margin-bottom: 20px;
+    }
+
+    .post-title {
+      font-size: 1.6rem;
+    }
+
+    .post-title .cn {
+      font-size: 1rem;
+    }
+
+    .post-content :global(p),
+    .post-content :global(h2),
+    .post-content :global(ul) {
+      max-width: 100%;
+    }
+  }
+</style>

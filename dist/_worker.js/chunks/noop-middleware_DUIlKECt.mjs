@@ -1,5 +1,5 @@
 globalThis.process ??= {}; globalThis.process.env ??= {};
-import { a4 as NOOP_MIDDLEWARE_HEADER } from './astro/server_BDITcAQH.mjs';
+import { a4 as NOOP_MIDDLEWARE_HEADER } from './astro/server_bMK97yVn.mjs';
 
 const NOOP_MIDDLEWARE_FN = async (_ctx, next) => {
   const response = await next();

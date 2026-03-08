@@ -16,6 +16,10 @@ const navItems = [
   { id: 'portfolio', en: 'Works', cn: '作品', url: '/portfolio/' },
   { id: 'share', en: 'Share', cn: '分享', url: '/share/' }
 ];
+
+// 判断当前页面是否需要显示返回按钮（非首页）
+const isHomePage = Astro.url.pathname === '/';
+const showBackButton = !isHomePage;
 ---
 
 <!DOCTYPE html>
@@ -29,6 +33,78 @@ const navItems = [
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
   <style is:global>
     @import '../styles/global.css';
+  </style>
+  <style>
+    /* Back Button Fixed Position */
+    .back-button-fixed {
+      position: fixed;
+      top: 100px;
+      left: 40px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: var(--text-muted, #888);
+      cursor: pointer;
+      padding: 10px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .back-button-fixed:hover {
+      color: var(--text-main, #fff);
+      transform: translateX(-3px);
+    }
+
+    .back-button-fixed i {
+      font-size: 1.5rem;
+    }
+
+    .back-text {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+
+    .back-text .cn {
+      font-size: 0.65rem;
+      opacity: 0.8;
+    }
+
+    /* Responsive for tablet */
+    @media (max-width: 1024px) {
+      .back-button-fixed {
+        left: 20px;
+        top: 90px;
+      }
+    }
+
+    /* Mobile - hide text, show only icon */
+    @media (max-width: 768px) {
+      .back-button-fixed {
+        left: 15px;
+        top: 85px;
+        padding: 8px;
+      }
+
+      .back-button-fixed i {
+        font-size: 1.3rem;
+      }
+
+      .back-text {
+        display: none;
+      }
+    }
+
+    /* Hide back button when mobile menu is open */
+    .mobile-nav.active ~ .back-button-fixed,
+    .mobile-nav-overlay.active ~ .back-button-fixed {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -52,27 +128,39 @@ const navItems = [
         </a>
       ))}
     </nav>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" aria-label="Menu" onclick="toggleMobileMenu()">
+      <i class="ri-menu-line" id="menu-icon-open"></i>
+      <i class="ri-close-line" id="menu-icon-close" style="display: none;"></i>
+    </button>
   </header>
 
-  <!-- Sidebar Social -->
-  <aside class="sidebar-social">
-    <a href="https://github.com/Dry-U" target="_blank" class="social-btn" aria-label="GitHub">
-      <i class="ri-github-fill"></i>
-    </a>
-    <a href="https://x.com/Dar1an12?s=09" target="_blank" class="social-btn" aria-label="X/Twitter">
-      <i class="ri-twitter-x-line"></i>
-    </a>
-    <a href="https://www.douyin.com/user/MS4wLjABAAAAErKu8J3wa7xio2BqmIjNznDI3i5UZaXQRAzH9EpOR9Y?from_tab_name=main" target="_blank" class="social-btn" aria-label="Douyin">
-      <i class="ri-tiktok-line"></i>
-    </a>
-    <div class="social-btn email-container" onclick="copyEmail()">
-      <i class="ri-mail-line"></i>
-      <span class="email-text">hwe2377@gmail.com (Click to Copy)</span>
-    </div>
-  </aside>
+  <!-- Mobile Navigation Drawer -->
+  <nav class="mobile-nav" id="mobile-nav">
+    {navItems.map(item => (
+      <a
+        href={item.url}
+        class={`mobile-nav-link ${item.id === 'home' && Astro.url.pathname === '/' ? 'active' : ''}`}
+        onclick="closeMobileMenu()"
+      >
+        <span class="en">{item.en}</span>
+        <span class="cn">{item.cn}</span>
+      </a>
+    ))}
+  </nav>
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
 
-  <!-- Copy Toast -->
-  <div id="copy-toast">邮箱已复制 / Email Copied</div>
+  <!-- Back Button (Fixed Left Top) -->
+  {showBackButton && (
+    <button class="back-button-fixed" onclick="goBack()" aria-label="Go back">
+      <i class="ri-arrow-left-line"></i>
+      <span class="back-text">
+        <span class="en">Back</span>
+        <span class="cn">返回</span>
+      </span>
+    </button>
+  )}
 
   <!-- Main Content -->
   <main>
@@ -90,26 +178,63 @@ const navItems = [
       }
     });
 
-    // Email copy function
-    function copyEmail() {
-      const email = "hwe2377@gmail.com";
-      navigator.clipboard.writeText(email).then(() => {
-        const toast = document.getElementById('copy-toast');
-        if (toast) {
-          toast.style.opacity = '1';
-          toast.style.top = '40%';
-          setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.top = '50%';
-          }, 2000);
-        }
-      }).catch(err => {
-        console.error('Copy failed:', err);
-      });
+    // Mobile Menu Functions
+    function toggleMobileMenu() {
+      const mobileNav = document.getElementById('mobile-nav');
+      const overlay = document.getElementById('mobile-nav-overlay');
+      const menuIconOpen = document.getElementById('menu-icon-open');
+      const menuIconClose = document.getElementById('menu-icon-close');
+      const body = document.body;
+
+      if (mobileNav?.classList.contains('active')) {
+        closeMobileMenu();
+      } else {
+        mobileNav?.classList.add('active');
+        overlay?.classList.add('active');
+        if (menuIconOpen) menuIconOpen.style.display = 'none';
+        if (menuIconClose) menuIconClose.style.display = 'block';
+        body.style.overflow = 'hidden';
+      }
     }
 
-    // Make copyEmail available globally
-    (window as any).copyEmail = copyEmail;
+    function closeMobileMenu() {
+      const mobileNav = document.getElementById('mobile-nav');
+      const overlay = document.getElementById('mobile-nav-overlay');
+      const menuIconOpen = document.getElementById('menu-icon-open');
+      const menuIconClose = document.getElementById('menu-icon-close');
+      const body = document.body;
+
+      mobileNav?.classList.remove('active');
+      overlay?.classList.remove('active');
+      if (menuIconOpen) menuIconOpen.style.display = 'block';
+      if (menuIconClose) menuIconClose.style.display = 'none';
+      body.style.overflow = '';
+    }
+
+    // Make mobile menu functions available globally
+    (window as any).toggleMobileMenu = toggleMobileMenu;
+    (window as any).closeMobileMenu = closeMobileMenu;
+
+    // Close mobile menu on window resize (if switching to desktop)
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        closeMobileMenu();
+      }
+    });
+
+    // Go back function for back button
+    function goBack() {
+      // Check if there's a referrer from the same site
+      if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        history.back();
+      } else {
+        // If no referrer, go to homepage
+        window.location.href = '/';
+      }
+    }
+
+    // Make goBack available globally
+    (window as any).goBack = goBack;
   </script>
 </body>
 </html>

@@ -2,68 +2,121 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const skills = [
-  { category: 'Frontend', items: ['HTML5 / CSS3', 'JavaScript (ES6+)', 'TypeScript', 'React / Next.js', 'Vue.js', 'Astro'] },
-  { category: 'Design', items: ['Figma', 'UI/UX Design', 'Responsive Design', 'Design Systems'] },
-  { category: 'Tools', items: ['Git / GitHub', 'Vercel', 'VS Code', 'Cursor'] },
-  { category: 'Other', items: ['Node.js', 'Python', 'RESTful APIs', 'SEO'] }
+  { category: 'Development', items: ['Python / PyTorch / Scikit-learn', 'Flask / FastAPI / RESTful API', 'HTML / CSS / JavaScript', 'Java / Swagger'] },
+  { category: 'Testing', items: ['Selenium / Pytest / Requests', 'JMeter Performance Testing', 'Postman / API Automation', 'Test Case / CI / Defect Management'] },
+  { category: 'Database', items: ['MySQL Index Optimization', 'MongoDB Document Design', 'SQL Complex Queries'] },
+  { category: 'Tools', items: ['Git / Docker / Linux', 'JIRA / 禅道', 'VS Code / Cursor'] }
 ];
 
-const experiences = [
+const timelineEvents = [
   {
-    period: '2023 - Present',
-    titleEn: 'Freelance Designer & Developer',
-    titleCn: '自由设计师与开发者',
-    desc: '独立承接 Web 设计与开发项目，专注于极简主义设计与高性能网站构建。'
+    date: '2022.09',
+    titleEn: 'University Entry',
+    titleCn: '大学入学',
+    subtitle: '宁夏理工学院 · 土木工程',
+    desc: '进入大学，开始土木工程专业的学习旅程',
+    side: 'left',
+    type: 'education'
   },
   {
-    period: '2021 - 2023',
-    titleEn: 'Frontend Developer',
-    titleCn: '前端开发工程师',
-    desc: '参与多个企业级项目的前端开发，负责界面实现与用户体验优化。'
+    date: '2023.09',
+    titleEn: 'Major Transfer',
+    titleCn: '转专业',
+    subtitle: '宁夏理工学院 · 计算机科学与技术',
+    desc: '转入计算机科学专业，开始系统学习编程与软件开发',
+    side: 'right',
+    type: 'education'
+  },
+  {
+    date: '2024.07',
+    titleEn: 'Testing Intern',
+    titleCn: '测试实习生',
+    subtitle: '偌禾网络科技有限公司',
+    desc: '参与支付系统测试，设计120+测试用例，搭建自动化框架',
+    side: 'left',
+    type: 'work'
+  },
+  {
+    date: '2025.01',
+    titleEn: 'L1 Ops Intern',
+    titleCn: '运维实习生',
+    subtitle: '神州融信科技 · 壳牌',
+    desc: '远程支持200+加油站核心业务系统，处理工单200+',
+    side: 'right',
+    type: 'work'
   }
 ];
 ---
 
-<BaseLayout title="About | Dar1an" description="关于 Dar1an - UI/UX 设计师与前端开发者">
+<BaseLayout title="About | Dar1an" description="关于 Dar1an">
   <div class="page-content about-page">
-    <!-- 个人简介 -->
-    <section class="about-hero">
-      <div class="about-intro">
+    <!-- About Me with Fishbone Timeline -->
+    <section class="about-hero" id="about-hero">
+      <div class="about-container">
         <h1 class="page-title">
           <span class="en">About Me</span>
           <span class="cn">关于我</span>
         </h1>
-        <div class="about-text">
-          <p class="lead">
-            <span class="en">I'm a designer and developer who believes in the power of simplicity.</span>
-            <span class="cn">我是一个相信简约力量的设计师和开发者。</span>
-          </p>
-          <p>
-            我专注于创造既美观又实用的数字体验。无论是从零开始构建一个网站，还是为现有产品改进用户界面，
-            我都致力于在设计与功能之间找到完美的平衡点。
-          </p>
-          <p>
-            除了工作，我喜欢探索新技术、撰写技术博客，以及在数字花园中整理我的知识体系。
-          </p>
+
+        <!-- Fishbone Timeline -->
+        <div class="fishbone-timeline">
+          <div class="fishbone-spine"></div>
+          {timelineEvents.map((event, index) => (
+            <div class={`fishbone-item ${event.side} ${event.type}`}>
+              <div class="fishbone-connector"></div>
+              <div class="fishbone-node"></div>
+              <div class="fishbone-content">
+                <div class="fishbone-date">{event.date}</div>
+                <div class="fishbone-header">
+                  <span class="en">{event.titleEn}</span>
+                  <span class="cn">{event.titleCn}</span>
+                </div>
+                <div class="fishbone-subtitle">{event.subtitle}</div>
+                <p class="fishbone-desc">{event.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div class="about-actions">
-          <a href="mailto:hwe2377@gmail.com" class="btn-primary">
-            <span class="en">Get in Touch</span>
-            <span class="cn">联系我</span>
-          </a>
-          <a href="/portfolio/" class="btn-secondary">
-            <span class="en">View Works</span>
-            <span class="cn">查看作品</span>
-          </a>
+
+        <div class="fishbone-legend">
+          <div class="fishbone-legend-item">
+            <div class="fishbone-legend-dot education"></div>
+            <span>教育 / Education</span>
+          </div>
+          <div class="fishbone-legend-item">
+            <div class="fishbone-legend-dot work"></div>
+            <span>实习 / Work</span>
+          </div>
         </div>
-      </div>
-      <div class="about-image">
-        <img src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" alt="Dar1an">
+
+        <!-- About Text & Actions -->
+        <div class="about-bottom">
+          <div class="about-text">
+            <p>
+              2023年我从土木工程转专业到计算机时，本以为是从"工地"到"写字楼"的转变。
+              而AI的爆发让我意识到，没有永恒的风口，只有对系统可靠性的持续追求。
+            </p>
+            <p>
+              无论是设计桥梁还是调试代码，本质都是在约束条件下解决真实问题。也让我明白：技术只是手段，理解真实世界才是价值所在。
+              未来会怎样？我不知道，但我选择做那个使用工具的人，而非被工具定义的人。
+            </p>
+          </div>
+          <div class="about-actions">
+            <button class="btn-primary" onclick="openSocialModal()">
+              <span class="en">Get in Touch</span>
+              <span class="cn">联系我</span>
+            </button>
+            <a href="/portfolio/" class="btn-secondary">
+              <span class="en">View Works</span>
+              <span class="cn">查看作品</span>
+            </a>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- 技能板块 -->
-    <section class="skills-section">
+    <section class="skills-section" id="skills-section">
       <h2 class="section-heading">
         <span class="en">Skills & Tools</span>
         <span class="cn">技能与工具</span>
@@ -82,93 +135,373 @@ const experiences = [
       </div>
     </section>
 
-    <!-- 经历板块 -->
-    <section class="experience-section">
-      <h2 class="section-heading">
-        <span class="en">Experience</span>
-        <span class="cn">工作经历</span>
-      </h2>
-      <div class="timeline">
-        {experiences.map(exp => (
-          <div class="timeline-item">
-            <div class="timeline-period">{exp.period}</div>
-            <div class="timeline-content">
-              <h3 class="timeline-title">
-                <span class="en">{exp.titleEn}</span>
-                <span class="cn">{exp.titleCn}</span>
-              </h3>
-              <p class="timeline-desc">{exp.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
   </div>
+
+  <!-- Social Contact Modal -->
+  <div class="social-modal-overlay" id="socialModalOverlay" onclick="closeSocialModal()"></div>
+  <div class="social-modal" id="socialModal">
+    <button class="social-modal-close" onclick="closeSocialModal()" aria-label="Close">
+      <i class="ri-close-line"></i>
+    </button>
+    <h3 class="social-modal-title">
+      <span class="en">Connect With Me</span>
+      <span class="cn">与我联系</span>
+    </h3>
+
+    <div class="social-links two-col">
+      <a href="https://github.com/Dry-U" target="_blank" class="social-link">
+        <i class="ri-github-fill"></i>
+        <span>GitHub</span>
+      </a>
+      <a href="https://x.com/Dar1an12?s=09" target="_blank" class="social-link">
+        <i class="ri-twitter-x-line"></i>
+        <span>X / Twitter</span>
+      </a>
+    </div>
+
+    <div class="email-section">
+      <h4>
+        <span class="en">Email</span>
+        <span class="cn">邮箱</span>
+      </h4>
+      <div class="email-list">
+        <button class="email-item" onclick="copyEmail('hwe2377@gmail.com')">
+          <i class="ri-mail-line"></i>
+          <span>hwe2377@gmail.com</span>
+          <i class="ri-file-copy-line copy-icon"></i>
+        </button>
+        <button class="email-item" onclick="copyEmail('Dar1an@126.com')">
+          <i class="ri-mail-line"></i>
+          <span>Dar1an@126.com</span>
+          <i class="ri-file-copy-line copy-icon"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copy Toast -->
+  <div class="copy-toast" id="copyToast">邮箱已复制 / Email Copied</div>
+
+  <script>
+    // Social Modal Functions
+    function openSocialModal() {
+      const modal = document.getElementById('socialModal');
+      const overlay = document.getElementById('socialModalOverlay');
+      modal?.classList.add('active');
+      overlay?.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSocialModal() {
+      const modal = document.getElementById('socialModal');
+      const overlay = document.getElementById('socialModalOverlay');
+      modal?.classList.remove('active');
+      overlay?.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Copy Email Function
+    function copyEmail(email) {
+      navigator.clipboard.writeText(email).then(() => {
+        const toast = document.getElementById('copyToast');
+        if (toast) {
+          toast.textContent = `${email} 已复制 / Copied`;
+          toast.classList.add('active');
+          setTimeout(() => {
+            toast.classList.remove('active');
+          }, 2000);
+        }
+      }).catch(err => {
+        console.error('Copy failed:', err);
+      });
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSocialModal();
+    });
+
+    // Make functions available globally
+    (window as any).openSocialModal = openSocialModal;
+    (window as any).closeSocialModal = closeSocialModal;
+    (window as any).copyEmail = copyEmail;
+  </script>
 </BaseLayout>
 
 <style>
   .about-page {
-    padding: 180px 10% 100px;
-    padding-left: 140px;
-    max-width: 1200px;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
   }
 
-  /* Hero Section */
+  /* Sticky Sections */
+  .about-page section {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    height: 100vh;
+    padding: 100px 10% 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: var(--bg-color, #050505);
+    box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.8);
+    border-top: 1px solid #111;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #about-hero {
+    z-index: 1;
+    box-shadow: none;
+    border-top: none;
+  }
+
+  #skills-section {
+    z-index: 2;
+  }
+
+  /* About Hero Section */
   .about-hero {
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 80px;
-    align-items: center;
-    margin-bottom: 120px;
+    width: 100%;
+    max-width: none;
+  }
+
+  .about-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
   }
 
   .page-title {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 300;
     margin-bottom: 40px;
     line-height: 1.2;
+    text-align: center;
   }
 
   .page-title .cn {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--text-muted);
-    margin-top: 10px;
+    margin-top: 8px;
+  }
+
+  /* Fishbone Timeline */
+  .fishbone-timeline {
+    position: relative;
+    padding: 20px 0 40px;
+    margin-bottom: 30px;
+  }
+
+  .fishbone-spine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom,
+      transparent 0%,
+      rgba(255,255,255,0.2) 5%,
+      rgba(255,255,255,0.2) 95%,
+      transparent 100%);
+    transform: translateX(-50%);
+  }
+
+  .fishbone-item {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 40px;
+    min-height: 100px;
+  }
+
+  .fishbone-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .fishbone-item.left {
+    flex-direction: row;
+    padding-right: calc(50% + 30px);
+    justify-content: flex-end;
+  }
+
+  .fishbone-item.right {
+    flex-direction: row-reverse;
+    padding-left: calc(50% + 30px);
+    justify-content: flex-end;
+  }
+
+  .fishbone-node {
+    position: absolute;
+    left: 50%;
+    top: 15px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg-color, #050505);
+    border: 3px solid rgba(255,255,255,0.3);
+    transform: translateX(-50%);
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .fishbone-item.education .fishbone-node {
+    border-color: rgba(100, 200, 255, 0.6);
+  }
+
+  .fishbone-item.work .fishbone-node {
+    border-color: rgba(255, 200, 100, 0.6);
+  }
+
+  .fishbone-item:hover .fishbone-node {
+    transform: translateX(-50%) scale(1.3);
+    border-color: var(--text-main);
+  }
+
+  .fishbone-connector {
+    position: absolute;
+    left: 50%;
+    top: 22px;
+    width: 30px;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+    transform-origin: left center;
+  }
+
+  .fishbone-item.left .fishbone-connector {
+    transform: translateX(-100%) rotate(0deg);
+  }
+
+  .fishbone-item.right .fishbone-connector {
+    transform: rotate(0deg);
+  }
+
+  .fishbone-content {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 320px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .fishbone-item:hover .fishbone-content {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+
+  .fishbone-date {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .fishbone-header {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+
+  .fishbone-header .en {
+    display: block;
+  }
+
+  .fishbone-header .cn {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .fishbone-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    opacity: 0.8;
+  }
+
+  .fishbone-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Legend */
+  .fishbone-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    font-size: 0.8rem;
+  }
+
+  .fishbone-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+  }
+
+  .fishbone-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid;
+  }
+
+  .fishbone-legend-dot.education {
+    border-color: rgba(100, 200, 255, 0.6);
+  }
+
+  .fishbone-legend-dot.work {
+    border-color: rgba(255, 200, 100, 0.6);
+  }
+
+  /* About Bottom Section */
+  .about-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: start;
   }
 
   .about-text p {
     color: var(--text-muted);
     line-height: 1.8;
-    margin-bottom: 20px;
-    font-size: 1.05rem;
+    margin-bottom: 16px;
+    font-size: 1rem;
   }
 
-  .about-text .lead {
-    font-size: 1.3rem;
-    color: var(--text-main);
-    margin-bottom: 30px;
-  }
-
-  .about-text .lead .cn {
-    display: block;
-    font-size: 1.1rem;
-    margin-top: 8px;
-    color: #aaa;
+  .about-text p:last-child {
+    margin-bottom: 0;
   }
 
   .about-actions {
     display: flex;
-    gap: 20px;
-    margin-top: 40px;
+    flex-direction: column;
+    gap: 15px;
+    min-width: 160px;
   }
 
   .btn-primary, .btn-secondary {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    padding: 12px 30px;
+    padding: 12px 24px;
     border-radius: 50px;
     transition: all 0.3s ease;
     cursor: pointer;
+    text-align: center;
   }
 
   .btn-primary {
@@ -191,37 +524,22 @@ const experiences = [
   }
 
   .btn-primary .en, .btn-secondary .en {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
   }
 
   .btn-primary .cn, .btn-secondary .cn {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     margin-top: 2px;
   }
 
   .btn-primary .cn { color: #555; }
   .btn-secondary .cn { color: var(--text-muted); }
 
-  .about-image {
-    position: relative;
-  }
-
-  .about-image img {
-    width: 100%;
-    max-width: 400px;
-    border-radius: 12px;
-    filter: grayscale(100%) brightness(0.9);
-    transition: all 0.5s ease;
-  }
-
-  .about-image:hover img {
-    filter: grayscale(0%) brightness(1);
-  }
-
   /* Skills Section */
   .skills-section {
-    margin-bottom: 120px;
+    width: 100%;
+    max-width: none;
   }
 
   .section-heading {
@@ -249,12 +567,14 @@ const experiences = [
     border-radius: 12px;
     padding: 30px;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   }
 
   .skill-card:hover {
     background: rgba(255,255,255,0.06);
     border-color: rgba(255,255,255,0.15);
     transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
   }
 
   .skill-category {
@@ -286,88 +606,342 @@ const experiences = [
     color: var(--text-muted);
   }
 
-  /* Experience Section */
-  .experience-section {
-    margin-bottom: 60px;
-  }
-
-  .timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-  }
-
-  .timeline-item {
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    gap: 40px;
-    padding: 30px;
-    background: rgba(255,255,255,0.02);
-    border-radius: 12px;
-    border-left: 3px solid rgba(255,255,255,0.1);
+  /* Social Modal Styles */
+  .social-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    z-index: 4000;
+    opacity: 0;
+    visibility: hidden;
     transition: all 0.3s ease;
   }
 
-  .timeline-item:hover {
-    background: rgba(255,255,255,0.04);
-    border-left-color: var(--text-main);
+  .social-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
   }
 
-  .timeline-period {
+  .social-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    width: 90%;
+    max-width: 420px;
+    background: rgba(15, 15, 15, 0.98);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px 30px;
+    z-index: 4001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .social-modal.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  .social-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
     color: var(--text-muted);
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: 0.3s;
   }
 
-  .timeline-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-    margin-bottom: 10px;
+  .social-modal-close:hover {
+    color: var(--text-main);
   }
 
-  .timeline-title .cn {
+  .social-modal-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 30px;
+  }
+
+  .social-modal-title .en {
+    display: block;
+    font-weight: 600;
+  }
+
+  .social-modal-title .cn {
     display: block;
     font-size: 0.9rem;
     color: var(--text-muted);
     margin-top: 5px;
-    font-weight: 400;
   }
 
-  .timeline-desc {
+  .social-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .social-links.two-col {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .social-links.two-col .social-link {
+    flex-direction: row;
+    justify-content: center;
+    padding: 18px 20px;
+  }
+
+  .social-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
     color: var(--text-muted);
-    line-height: 1.7;
+    transition: all 0.3s ease;
+    min-width: 80px;
+  }
+
+  .social-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-main);
+    transform: translateY(-3px);
+  }
+
+  .social-link i {
+    font-size: 1.8rem;
+  }
+
+  .social-link span {
+    font-size: 0.75rem;
+  }
+
+  .email-section {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 25px;
+  }
+
+  .email-section h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .email-section h4 .cn {
+    font-weight: 400;
+    margin-left: 8px;
+  }
+
+  .email-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .email-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.9rem;
+  }
+
+  .email-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .email-item i:first-child {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  .email-item span {
+    flex: 1;
+    text-align: left;
+  }
+
+  .copy-icon {
+    color: var(--text-muted);
+    font-size: 1rem;
+    opacity: 0.6;
+    transition: 0.3s;
+  }
+
+  .email-item:hover .copy-icon {
+    opacity: 1;
+    color: var(--text-main);
+  }
+
+  /* Copy Toast */
+  .copy-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    z-index: 5000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .copy-toast.active {
+    opacity: 1;
+    visibility: visible;
   }
 
   /* Responsive */
   @media (max-width: 768px) {
-    .about-page {
-      padding: 120px 5% 100px;
-    }
-
-    .about-hero {
-      grid-template-columns: 1fr;
-      gap: 40px;
+    .about-page section {
+      padding: 90px 5% 100px;
+      padding-left: 5%;
+      min-height: 100vh;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .page-title {
       font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    /* Fishbone Mobile - Vertical */
+    .fishbone-timeline {
+      padding: 10px 0 20px 25px;
+      margin-bottom: 20px;
+    }
+
+    .fishbone-spine {
+      left: 6px;
+      transform: none;
+    }
+
+    .fishbone-item {
+      margin-bottom: 25px;
+      padding: 0 !important;
+      flex-direction: row !important;
+      justify-content: flex-start !important;
+      min-height: auto;
+    }
+
+    .fishbone-node {
+      left: 6px;
+      top: 12px;
+      width: 10px;
+      height: 10px;
+      transform: translateX(-50%);
+    }
+
+    .fishbone-item:hover .fishbone-node {
+      transform: translateX(-50%) scale(1.2);
+    }
+
+    .fishbone-connector {
+      display: none;
+    }
+
+    .fishbone-content {
+      margin-left: 25px;
+      max-width: none;
+      padding: 15px;
+    }
+
+    .fishbone-header {
+      font-size: 0.95rem;
+    }
+
+    .fishbone-subtitle {
+      font-size: 0.8rem;
+    }
+
+    .fishbone-desc {
+      font-size: 0.75rem;
+    }
+
+    .fishbone-legend {
+      gap: 20px;
+      margin-bottom: 30px;
+      font-size: 0.75rem;
+    }
+
+    /* About Bottom Mobile */
+    .about-bottom {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      padding-top: 30px;
+    }
+
+    .about-text p {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 12px;
     }
 
     .about-actions {
-      flex-direction: column;
-    }
-
-    .about-image img {
-      max-width: 100%;
-    }
-
-    .timeline-item {
-      grid-template-columns: 1fr;
+      flex-direction: row;
+      justify-content: center;
       gap: 15px;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 10px 20px;
     }
 
     .skills-grid {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .skill-card {
+      min-height: auto;
+      padding: 25px;
+    }
+
+    .skill-list {
+      gap: 10px;
+    }
+
+    .skill-item {
+      font-size: 0.95rem;
     }
   }
 </style>

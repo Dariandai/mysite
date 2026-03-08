@@ -47,16 +47,6 @@
 | `npm run build`   | 构建生产版本到 `./dist/`               |
 | `npm run preview` | 本地预览构建结果                       |
 
-## 部署方式
-
-### Cloudflare Pages（推荐）
-
-1. 将代码推送到 GitHub/GitLab
-2. 在 Cloudflare Pages 中连接仓库
-3. 构建设置：
-   - Framework preset: `Astro`
-   - Build command: `npm run build`
-   - Build output: `dist`
 
 ### Wrangler CLI
 
@@ -82,7 +72,7 @@ npx wrangler pages deploy dist
 - [ ] 添加 canonical URL
 
 ### 内容管理
-- [ ] 将博客文章迁移到 Markdown/MDX 文件
+- [-] 将博客文章迁移到 Markdown/MDX 文件
 - [ ] 添加文章阅读时间估算
 - [ ] 实现文章标签/分类系统
 - [ ] 添加 RSS 订阅支持（`@astrojs/rss`）
@@ -91,7 +81,7 @@ npx wrangler pages deploy dist
 - [ ] 添加页面加载过渡动画
 - [ ] 实现键盘导航支持（方向键切换 section）
 - [ ] 添加触摸滑动支持（移动端手势）
-- [ ] 优化移动端 Skills 区域的卡片高度
+- [-] 优化移动端 Skills 区域的卡片高度
 
 ### Cloudflare 特性
 - [ ] 配置 Cloudflare Analytics 网站分析

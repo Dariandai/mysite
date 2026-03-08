@@ -3,33 +3,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 const blogPosts = [
     {
-        date: '2023.10.24',
-        titleEn: 'Minimalism in Web Design',
-        titleCn: '极简主义在网页设计中的应用',
-        excerpt: '探讨如何在做减法的同时保持功能的完整性...',
-        url: '/blog/minimalism/'
+        date: '2026.03.03',
+        titleEn: 'Understanding the Brain',
+        titleCn: '认识大脑：为什么我总是想偷懒',
+        excerpt: '从脑科学角度理解拖延与焦虑，找到与自己和解的方法。',
+        url: '/blog/brain-science/'
     },
     {
-        date: '2023.09.15',
-        titleEn: 'The Art of Dark Mode',
-        titleCn: '深色模式的设计艺术',
-        excerpt: '为什么高端品牌都喜欢使用纯黑背景？',
-        url: '/blog/'
+        date: '2026.02.24',
+        titleEn: 'The Two Types of Magic',
+        titleCn: '两种魔术：刘谦给罗永浩上的那堂课',
+        excerpt: '听完四小时播客，重新理解魔术的价值。',
+        url: '/blog/luo-yonghao-liu-qian/'
     },
     {
-        date: '2023.08.01',
-        titleEn: 'Refactoring Digital Garden',
-        titleCn: '重构我的数字花园',
-        excerpt: '从零开始搭建个人知识库的技术栈选择。',
-        url: '/blog/'
+        date: '2025.08.11',
+        titleEn: 'Running AI Locally',
+        titleCn: '在本地跑AI：从折腾到真香',
+        excerpt: 'WSL2 + llama.cpp/vLLM 部署踩坑记录。',
+        url: '/blog/local-ai/'
     }
 ];
 
 const works = [
     {
-        titleEn: 'Project Alpha',
-        titleCn: '企业级 Web 设计系统',
-        image: 'https://img.dar1an.dpdns.org/Picgo/2025/10-29-18-31-57.jpg',
+        titleEn: 'File Tools ',
+        titleCn: '本地文件智能检索与问答系统',
+        image: 'https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png',
         url: '/portfolio/project-alpha/'
     },
     {
@@ -48,9 +48,9 @@ const tools = [
 ];
 
 const skills = [
-    { category: 'Design', icon: 'ri-palette-line', items: ['UI/UX Design', 'Design Systems', 'Figma'] },
-    { category: 'Frontend', icon: 'ri-code-box-line', items: ['HTML5 / CSS3', 'JavaScript', 'React / Astro'] },
-    { category: 'Tools', icon: 'ri-tools-line', items: ['Git / GitHub', 'Vercel', 'Cursor'] }
+    { category: 'Development', icon: 'ri-code-box-line', items: ['Python / PyTorch / Flask', 'FastAPI / RESTful API', 'HTML / CSS / JavaScript', 'Java'] },
+    { category: 'Testing', icon: 'ri-bug-line', items: ['Selenium / Pytest / Requests', 'JMeter Performance Testing', 'Postman API Testing', 'Test Case Design / CI'] },
+    { category: 'Tools & DB', icon: 'ri-database-2-line', items: ['MySQL / MongoDB', 'Git / Docker / Linux', 'JIRA / 禅道', 'Swagger / Node.js'] }
 ];
 ---
 
@@ -59,23 +59,22 @@ const skills = [
     <section id="home">
         <div class="hero-text">
             <div class="text-group">
-                <p class="en" style="color: var(--text-muted);">UI/UX DESIGNER & DEVELOPER</p>
-                <p class="cn">界面设计 / 前端开发</p>
+                <p class="en" style="color: var(--text-muted);">WORK IN PROGRESS & DEVELOPER</p>
+                <p class="cn">探索 / 开发</p>
             </div>
             <br>
             <div class="text-group">
-                <h1 class="en">Hello,<br>I am Dar1an.</h1>
-                <h1 class="cn" style="font-size: 1.5rem; font-weight:300; color:#aaa;">你好，我是 Dar1an。</h1>
+                <h1 class="en">Hello,<br>It's Darian.</h1><h2>代宇</h2>
             </div>
             <br>
             <div class="text-group">
-                <p class="en" style="color: var(--text-muted);">Exploring the boundaries between design and code.</p>
-                <p class="cn">探索设计与代码的边界，构建极致的数字体验。</p>
+                <p class="en" style="color: var(--text-muted);">Finding my way and digging deep into how things work.Training for the long game.</p>
+                <p class="cn">探索技术之径，穷理事物之微，修身砺志赴远。</p>
             </div>
 
-            <a href="/share/" class="btn-connect">
-                <span class="en">Check Resources</span>
-                <span class="cn">查看分享与工具</span>
+            <a href="/portfolio/" class="btn-connect">
+                <span class="en">Check Portfolio</span>
+                <span class="cn">查看个人作品</span>
             </a>
         </div>
 
@@ -276,4 +275,88 @@ const skills = [
 
     window.addEventListener('scroll', updateActiveNav);
     updateActiveNav();
+
+    // 移动端滚动拦截 - 确保section内容滚动完才切换到下一个
+    if (window.innerWidth <= 768) {
+        let currentSectionIndex = 0;
+        let isScrolling = false;
+        const scrollThreshold = 5; // 滚动到底部的容差
+
+        // 获取当前应该操作的section
+        function getCurrentSection() {
+            const scrollY = window.scrollY;
+            const vh = window.innerHeight;
+            const index = Math.round(scrollY / vh);
+            return {
+                index: Math.max(0, Math.min(index, sectionOrder.length - 1)),
+                id: sectionOrder[Math.max(0, Math.min(index, sectionOrder.length - 1))]
+            };
+        }
+
+        // 检查section是否可以内部滚动
+        function canScrollInside(sectionId: string, direction: 'up' | 'down') {
+            const section = document.getElementById(sectionId);
+            if (!section) return false;
+
+            const scrollTop = section.scrollTop;
+            const scrollHeight = section.scrollHeight;
+            const clientHeight = section.clientHeight;
+
+            if (direction === 'down') {
+                // 检查是否还能向下滚动
+                return scrollTop + clientHeight < scrollHeight - scrollThreshold;
+            } else {
+                // 检查是否还能向上滚动
+                return scrollTop > scrollThreshold;
+            }
+        }
+
+        // 处理wheel事件
+        window.addEventListener('wheel', (e) => {
+            const { id: currentId, index } = getCurrentSection();
+            const direction = e.deltaY > 0 ? 'down' : 'up';
+
+            // 如果当前section有未显示的内容，阻止页面滚动
+            if (canScrollInside(currentId, direction)) {
+                e.preventDefault();
+                const section = document.getElementById(currentId);
+                if (section) {
+                    section.scrollTop += e.deltaY;
+                }
+            }
+        }, { passive: false });
+
+        // 处理touch事件
+        let touchStartY = 0;
+        let touchStartX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', (e) => {
+            const touchY = e.touches[0].clientY;
+            const touchX = e.touches[0].clientX;
+            const deltaY = touchStartY - touchY;
+            const deltaX = touchStartX - touchX;
+
+            // 如果是水平滚动，不拦截
+            if (Math.abs(deltaX) > Math.abs(deltaY)) return;
+
+            const { id: currentId } = getCurrentSection();
+            const direction = deltaY > 0 ? 'down' : 'up';
+
+            // 如果当前section有未显示的内容，阻止页面滚动
+            if (canScrollInside(currentId, direction)) {
+                e.preventDefault();
+                const section = document.getElementById(currentId);
+                if (section) {
+                    section.scrollTop += deltaY;
+                }
+            }
+
+            touchStartY = touchY;
+        }, { passive: false });
+    }
 </script>

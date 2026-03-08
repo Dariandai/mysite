@@ -1,29 +1,19 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const posts = [
-  {
-    slug: 'minimalism',
-    date: '2023.10.24',
-    titleEn: 'Minimalism in Web Design',
-    titleCn: '极简主义在网页设计中的应用',
-    excerpt: '探讨如何在做减法的同时保持功能的完整性...'
-  },
-  {
-    slug: 'dark-mode',
-    date: '2023.09.15',
-    titleEn: 'The Art of Dark Mode',
-    titleCn: '深色模式的设计艺术',
-    excerpt: '为什么高端品牌都喜欢使用纯黑背景？'
-  },
-  {
-    slug: 'digital-garden',
-    date: '2023.08.01',
-    titleEn: 'Refactoring Digital Garden',
-    titleCn: '重构我的数字花园',
-    excerpt: '从零开始搭建个人知识库的技术栈选择。'
-  }
-];
+const posts = await Astro.glob('../../content/posts/*.md');
+const sortedPosts = posts
+  .map(post => {
+    const slug = post.file.split('/').pop().replace('.md', '');
+    return {
+      slug,
+      date: post.frontmatter.date,
+      titleEn: post.frontmatter.title,
+      titleCn: post.frontmatter.titleCn,
+      excerpt: post.frontmatter.description,
+    };
+  })
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 ---
 
 <BaseLayout title="Blog | Dar1an" description="思考与博客文章">
@@ -37,9 +27,9 @@ const posts = [
     </header>
 
     <div class="posts-list">
-      {posts.map(post => (
+      {sortedPosts.map(post => (
         <article class="post-item">
-          <time class="post-date">{post.date}</time>
+          <time class="post-date">{post.date.replace(/-/g, '.')}</time>
           <a href={`/blog/${post.slug}/`} class="post-link">
             <h2 class="post-title">
               <span class="en">{post.titleEn}</span>
@@ -50,6 +40,7 @@ const posts = [
         </article>
       ))}
     </div>
+
   </div>
 </BaseLayout>
 

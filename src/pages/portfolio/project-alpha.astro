@@ -2,47 +2,100 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Project Alpha | Dar1an" description="企业级 Web 设计系统">
+<BaseLayout title="File Tools | Dar1an" description="本地文件智能检索与问答系统">
   <article class="project-detail">
     <header class="project-header">
-      <span class="project-category">Design System</span>
+      <span class="project-category">Python / Desktop App</span>
       <h1 class="project-title">
-        <span class="en">Project Alpha</span>
-        <span class="cn">企业级 Web 设计系统</span>
+        <span class="en">File Tools</span>
+        <span class="cn">本地文件智能检索与问答系统</span>
       </h1>
     </header>
 
     <div class="project-image-full">
-      <img src="https://img.dar1an.dpdns.org/Picgo/2025/10-29-18-31-57.jpg" alt="Project Alpha" />
+      <img src="https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png" alt="File Tools" />
     </div>
 
     <div class="project-content">
       <section class="project-section">
-        <h2>项目概述</h2>
-        <p>Project Alpha 是一个面向企业级应用的 Web 设计系统。它包含了完整的组件库、设计规范和开发指南，帮助团队快速构建一致性的用户界面。</p>
+        <h2>项目背景</h2>
+        <p>做毕设 RAG 项目的时候，每次调 API 都要花钱，网络还不稳定。心一横，干脆自己搭一套本地文档检索系统。没想到从一个简单的脚本，慢慢迭代成了一个完整的桌面应用。目前在自己的笔记本上跑了两个多月，处理了几千份文档，算是经住了实战考验。</p>
       </section>
 
       <section class="project-section">
-        <h2>设计目标</h2>
+        <h2>核心功能</h2>
         <ul>
-          <li>建立统一的设计语言和视觉规范</li>
-          <li>提高开发效率，减少重复工作</li>
-          <li>确保跨产品的一致用户体验</li>
-          <li>支持快速迭代和扩展</li>
+          <li><strong>混合检索</strong>：关键词检索（Tantivy）+ 语义检索（HNSWLib），按权重融合排序</li>
+          <li><strong>智能问答</strong>：RAG 流程，先检索相关文档片段，再让 LLM 生成答案，带引用溯源</li>
+          <li><strong>多格式支持</strong>：PDF、Word、Excel、PPT、Markdown 等常见办公文档</li>
+          <li><strong>实时监控</strong>：文件增删改自动触发索引增量更新，不用手动重建</li>
+          <li><strong>会话管理</strong>：支持多轮对话，历史记录自动保存，可随时切换话题</li>
+        </ul>
+      </section>
+
+      <section class="project-section">
+        <h2>技术架构</h2>
+        <p><strong>后端：</strong>FastAPI 提供 RESTful API，模块化路由设计（搜索、聊天、配置、目录管理相互独立）</p>
+        <p><strong>桌面端：</strong>Pywebview 封装 Web 界面为原生窗口，避免浏览器跨域限制，体验更接近传统软件</p>
+        <p><strong>检索引擎：</strong>Tantivy 负责全文检索（基于 Rust，速度快内存占用低），HNSWLib 处理向量相似度搜索</p>
+        <p><strong>嵌入模型：</strong>FastEmbed 生成文档向量，默认使用 bge-small-zh，本地产出无需联网</p>
+        <p><strong>LLM 推理：</strong>llama-cpp-python 本地加载 GGUF 模型，支持 Phi、Qwen、Llama 等主流模型</p>
+      </section>
+
+      <section class="project-section">
+        <h2>RAG 实现细节</h2>
+        <p>整个问答流程分三步走：</p>
+        <ul>
+          <li><strong>检索：</strong>用户提问后，先用嵌入模型转成向量，在 HNSW 索引里找 Top-K 相似文档；同时用 Tantivy 做关键词匹配。两个分数按权重（默认 6:4）融合，重排序后取最相关的片段。</li>
+          <li><strong>构造 Prompt：</strong>把检索到的文档片段拼进系统提示词，加上对话历史，组成完整的上下文。</li>
+          <li><strong>生成：</strong>调用本地 LLM 生成回答，同时返回引用的源文档，方便用户核对。</li>
+        </ul>
+        <p>这样设计的好处是即使 LLM 胡言乱语，用户也能追溯到原始文档自行判断。</p>
+      </section>
+
+      <section class="project-section">
+        <h2>性能表现</h2>
+        <ul>
+          <li>关键词检索：&lt; 1 秒（10 万文档规模）</li>
+          <li>语义检索：&lt; 3 秒（向量维度 768，HNSW 索引）</li>
+          <li>问答生成：&lt; 5 秒（RTX 3060 加载 Qwen2.5-7B-Q6_K）</li>
+          <li>内存占用：索引构建时峰值约 8GB，运行时稳定在 4GB 左右</li>
+        </ul>
+      </section>
+
+      <section class="project-section">
+        <h2>遇到的坑</h2>
+        <p><strong>WSL2 文件监听失效：</strong>Windows 侧的文件变动，WSL2 里的 Python watchdog 有时收不到事件。最后妥协方案是 Windows 下用原生 Python 跑文件监控，通过 HTTP 通知 WSL 里的服务更新索引。</p>
+        <p><strong>PDF 解析乱码：</strong>有些扫描版 PDF 文字层和图像层错位，pdfminer 提取出来是乱码。试了 PyMuPDF、pdfplumber 好几个库，最后用启发式规则组合解决，准确率提升到 95% 以上。</p>
+        <p><strong>显存爆炸：</strong>一开始贪心想跑 13B 模型，结果 12G 显存直接 OOM。后来学会用 Q4_K_M 量化，配合 --gpu-memory-utilization 参数限制显存占用，7B 模型流畅运行。</p>
+      </section>
+
+      <section class="project-section">
+        <h2>后续计划</h2>
+        <ul>
+          <li>OCR 支持：扫描版 PDF 目前识别率还不够理想，打算接入 PaddleOCR</li>
+          <li>插件系统：允许用户自定义文档解析器和检索策略</li>
+          <li>跨平台打包：目前只能在 Windows+WSL 跑，想做成真正的单文件绿色版</li>
         </ul>
       </section>
 
       <section class="project-section">
         <h2>技术栈</h2>
-        <p>Figma, React, TypeScript, Storybook, TailwindCSS</p>
+        <p>FastAPI · Pywebview · Tantivy · HNSWLib · llama-cpp-python · FastEmbed</p>
+      </section>
+
+      <section class="project-section">
+        <h2>GitHub</h2>
+        <p>
+          <a href="https://github.com/Dry-U/File-tools" target="_blank" class="project-link">
+            github.com/Dry-U/File-tools
+          </a>
+        </p>
       </section>
     </div>
 
     <footer class="project-footer">
-      <a href="/portfolio/" class="back-link">
-        ← <span class="en">Back to Portfolio</span>
-        <span class="cn">返回作品集</span>
-      </a>
+      <!-- Back button moved to BaseLayout -->
     </footer>
   </article>
 </BaseLayout>
@@ -54,10 +107,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     min-height: 100vh;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
   }
 
   .project-header {
     margin-bottom: 40px;
+    position: relative;
+    z-index: 2;
   }
 
   .project-category {
@@ -65,12 +121,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 2px;
+    display: block;
   }
 
   .project-title {
     font-size: 2.5rem;
     font-weight: 300;
     margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
   }
 
   .project-title .cn {
@@ -80,14 +140,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
 
   .project-image-full {
+    margin-top: 20px;
     margin-bottom: 60px;
     border-radius: 12px;
     overflow: hidden;
+    position: relative;
+    z-index: 1;
   }
 
   .project-image-full img {
     width: 100%;
     height: auto;
+    display: block;
   }
 
   .project-content {
@@ -116,33 +180,41 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     line-height: 2;
   }
 
+  .project-link {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.3s;
+  }
+
+  .project-link:hover {
+    color: var(--text-main);
+  }
+
   .project-footer {
     margin-top: 80px;
     padding-top: 40px;
     border-top: 1px solid rgba(255,255,255,0.1);
   }
 
-  .back-link {
-    display: inline-flex;
-    flex-direction: column;
-    color: var(--text-muted);
-  }
-
-  .back-link:hover {
-    color: var(--text-main);
-  }
-
-  .back-link .cn {
-    font-size: 0.8rem;
-  }
-
   @media (max-width: 768px) {
     .project-detail {
       padding: 120px 5% 100px;
+      overflow-y: auto;
+    }
+
+    .project-header {
+      margin-bottom: 30px;
     }
 
     .project-title {
       font-size: 1.8rem;
+      line-height: 1.3;
+    }
+
+    .project-image-full {
+      margin-top: 40px;
+      margin-bottom: 40px;
     }
   }
 </style>
