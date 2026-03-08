@@ -19,7 +19,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <div class="project-content">
       <section class="project-section">
         <h2>项目背景</h2>
-        <p>做毕设 RAG 项目的时候，每次调 API 都要花钱，网络还不稳定。心一横，干脆自己搭一套本地文档检索系统。没想到从一个简单的脚本，慢慢迭代成了一个完整的桌面应用。目前在自己的笔记本上跑了两个多月，处理了几千份文档，算是经住了实战考验。</p>
+        <p>随着本地文件数量快速增长和隐私保护需求增强，用户需要一款完全离线运行的智能文件检索工具。本项目旨在开发一个基于Python的智能文件助手，结合快速文件索引技术和本地/在线大语言模型，实现高效的文件搜索、内容问答和等功能。</p>
       </section>
 
       <section class="project-section">
@@ -50,7 +50,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <li><strong>构造 Prompt：</strong>把检索到的文档片段拼进系统提示词，加上对话历史，组成完整的上下文。</li>
           <li><strong>生成：</strong>调用本地 LLM 生成回答，同时返回引用的源文档，方便用户核对。</li>
         </ul>
-        <p>这样设计的好处是即使 LLM 胡言乱语，用户也能追溯到原始文档自行判断。</p>
+        <p>这样设计的好处是即使 LLM 没有答对，用户也能追溯到原始文档自行判断。</p>
       </section>
 
       <section class="project-section">
