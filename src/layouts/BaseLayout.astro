@@ -31,6 +31,10 @@ const showBackButton = !isHomePage;
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+  <!-- GSAP for smooth scroll animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" is:inline></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" is:inline></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" is:inline></script>
   <style is:global>
     @import '../styles/global.css';
   </style>
@@ -83,20 +87,50 @@ const showBackButton = !isHomePage;
       }
     }
 
-    /* Mobile - hide text, show only icon */
+    /* Tablet - show fixed back button */
+    @media (min-width: 769px) {
+      .back-button-nav {
+        display: none !important;
+      }
+    }
+
+    /* Nav left container */
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Back button in nav */
+    .back-button-nav {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.3s ease;
+    }
+
+    .back-button-nav:hover {
+      color: var(--text-main);
+    }
+
+    /* Mobile: show nav back button, hide fixed back button */
     @media (max-width: 768px) {
+      .back-button-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
       .back-button-fixed {
-        left: 15px;
-        top: 85px;
-        padding: 8px;
+        display: none !important;
       }
 
-      .back-button-fixed i {
-        font-size: 1.3rem;
-      }
-
-      .back-text {
-        display: none;
+      .nav-left {
+        gap: 10px;
       }
     }
 
@@ -110,10 +144,17 @@ const showBackButton = !isHomePage;
 <body>
   <!-- Navigation -->
   <header id="navbar">
-    <a href="/" class="logo">
-      <img src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" alt="Avatar">
-      <span>Dar1an</span>
-    </a>
+    <div class="nav-left">
+      {showBackButton && (
+        <button class="back-button-nav" onclick="goBack()" aria-label="Go back">
+          <i class="ri-arrow-left-line"></i>
+        </button>
+      )}
+      <a href="/" class="logo">
+        <img src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" alt="Avatar">
+        <span>Dar1an</span>
+      </a>
+    </div>
     <nav class="nav-links">
       {navItems.map(item => (
         <a

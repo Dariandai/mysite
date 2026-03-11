@@ -83,8 +83,8 @@ const skills = [
         </div>
     </section>
 
-    <!-- 2. 技能 (Skills) -->
-    <section id="skills">
+    <!-- 2. 关于 (About) -->
+    <section id="about">
         <h2 class="section-title">
             <span class="sub">Skills & Tools / 技能与工具</span>
             <div class="text-group">
@@ -192,7 +192,7 @@ const skills = [
 
         <footer>
             <div class="text-group">
-                <span class="en">&copy; 2025 Dar1an. All Rights Reserved.</span>
+                <span class="en">&copy; 2026 Dar1an. All Rights Reserved.</span>
                 <span class="cn">保留所有权利。</span>
             </div>
         </footer>
@@ -200,163 +200,506 @@ const skills = [
 </BaseLayout>
 
 <script>
-    // 堆叠滚动导航
-    const sectionOrder = ['home', 'skills', 'blog', 'portfolio', 'share'];
-
-    function getScrollPosition(targetId: string) {
-        const index = sectionOrder.indexOf(targetId);
-        if (index === -1) return 0;
-        if (window.innerWidth <= 768) {
-            const element = document.getElementById(targetId);
-            return element ? element.offsetTop : 0;
+    // GSAP Stacking Cards - 采用 GSAP 社区最佳实践: Pinned Section + 内部滚动监听 + 吸附阻尼
+    function initGSAPAnimations() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+            setTimeout(initGSAPAnimations, 100);
+            return;
         }
-        return index * window.innerHeight;
-    }
 
-    function smoothScrollTo(targetPosition: number) {
-        window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
+        gsap.registerPlugin(ScrollTrigger);
+
+        const sections = document.querySelectorAll('section');
+        const sectionOrder = ['home', 'about', 'blog', 'portfolio', 'share'];
+
+        // 状态管理
+        const SectionPhase = {
+            HIDDEN: 'hidden',
+            ENTERING: 'entering',
+            ACTIVE: 'active',
+            EXITING: 'exiting'
+        };
+
+        const sectionStates = Array.from(sections).map(() => ({
+            phase: SectionPhase.HIDDEN,
+            isAtTop: true,
+            isAtBottom: false,
+            wrapper: null
+        }));
+
+        // 初始化第一个section为活跃状态
+        sectionStates[0].phase = SectionPhase.ACTIVE;
+        sectionStates[0].isAtTop = true;
+
+        let currentSectionIndex = 0;
+        let isTransitioning = false;
+        let accumulatedDelta = 0; // 用于阻尼效果
+        const DAMPING_THRESHOLD = 400; // 增加阻尼阈值，让滑动过程更明显，能看到模糊渐变
+
+        // 检测设备类型 - 包含横屏检测
+        const isMobile = () => window.innerWidth <= 768;
+        const isLandscape = () => window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // 清理已存在的wrapper避免重复
+        function cleanup() {
+            sections.forEach(section => {
+                const existingWrapper = section.querySelector('.section-scroll-wrapper');
+                if (existingWrapper) {
+                    const content = existingWrapper.querySelector('.section-scroll-content');
+                    if (content) {
+                        const children = Array.from(content.children);
+                        children.forEach(child => section.appendChild(child));
+                    }
+                    existingWrapper.remove();
+                }
+                const existingOverlay = section.querySelector('.blur-overlay');
+                if (existingOverlay) existingOverlay.remove();
+            });
+            ScrollTrigger.getAll().forEach(st => st.kill());
+        }
+
+        cleanup();
+
+        // 设置初始样式
+        sections.forEach((section, index) => {
+            const zIndex = (index + 1) * 10;
+            section.setAttribute('data-gsap', 'true');
+            section.style.zIndex = String(zIndex);
+            section.style.position = 'sticky';
+            section.style.top = '0';
+            section.style.left = '0';
+            section.style.width = '100%';
+            section.style.height = '100vh';
+            section.style.opacity = '1';
+            section.style.overflow = 'hidden';
+            section.style.backgroundColor = 'var(--bg-color, #050505)';
         });
-    }
 
-    // 为所有导航链接添加点击事件
-    document.querySelectorAll('.nav-anchor').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href && href.startsWith('#')) {
+        // 创建内容包装器
+        const wrappers = [];
+        sections.forEach((section, index) => {
+            const children = Array.from(section.children);
+            const wrapper = document.createElement('div');
+            wrapper.className = 'section-scroll-wrapper';
+            wrapper.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                overflow-y: ${index === 0 ? 'auto' : 'hidden'};
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+                z-index: 1;
+            `;
+
+            const content = document.createElement('div');
+            content.className = 'section-scroll-content';
+            const homeFlag = section.id === 'home';
+            const mobileFlag = isMobile();
+            const landscapeFlag = isLandscape();
+            content.style.cssText = `
+                min-height: 100vh;
+                padding: ${landscapeFlag ? '60px 5% 20px' : '100px 10% 50px'};
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: ${homeFlag && !mobileFlag ? 'row' : 'column'};
+                ${homeFlag && !mobileFlag ? 'align-items: center; justify-content: space-between;' : ''}
+            `;
+
+            children.forEach(child => content.appendChild(child));
+            wrapper.appendChild(content);
+            section.appendChild(wrapper);
+            wrappers.push(wrapper);
+            sectionStates[index].wrapper = wrapper;
+
+            // 为每个section（除了最后一个）添加模糊遮罩层
+            if (index === sections.length - 1) return;
+
+            const blurOverlay = document.createElement('div');
+            blurOverlay.className = 'blur-overlay';
+            blurOverlay.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                backdrop-filter: blur(0px);
+                background: rgba(5, 5, 5, 0);
+                pointer-events: none;
+                z-index: 9999;
+                transition: backdrop-filter 0.3s ease, background 0.3s ease;
+            `;
+            section.appendChild(blurOverlay);
+        });
+
+        // 更新所有section的模糊状态 - 使用GSAP动画让渐变过程更明显
+        function updateBlurStates() {
+            sections.forEach((section, index) => {
+                const blurOverlay = section.querySelector('.blur-overlay');
+                if (!blurOverlay) return;
+
+                if (index < currentSectionIndex) {
+                    // 当前section之前的所有section都应该有模糊
+                    gsap.to(blurOverlay, {
+                        backdropFilter: 'blur(15px)',
+                        background: 'rgba(5, 5, 5, 0.6)',
+                        duration: 1.0, // 增加动画持续时间
+                        ease: 'power2.inOut'
+                    });
+                } else {
+                    // 当前及之后的section没有模糊
+                    gsap.to(blurOverlay, {
+                        backdropFilter: 'blur(0px)',
+                        background: 'rgba(5, 5, 5, 0)',
+                        duration: 1.0, // 增加动画持续时间
+                        ease: 'power2.inOut'
+                    });
+                }
+            });
+        }
+
+        // 监听内部滚动位置
+        wrappers.forEach((wrapper, index) => {
+            wrapper.addEventListener('scroll', () => {
+                if (sectionStates[index].phase !== SectionPhase.ACTIVE) return;
+
+                const { scrollTop, scrollHeight, clientHeight } = wrapper;
+                sectionStates[index].isAtTop = scrollTop <= 5;
+                sectionStates[index].isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+            }, { passive: true });
+        });
+
+        // 滚动到指定section - 带吸附阻尼效果
+        function goToSection(targetIndex) {
+            if (isTransitioning || targetIndex < 0 || targetIndex >= sections.length) return;
+            if (targetIndex === currentSectionIndex) return;
+
+            // 限制最后一个section的滚动 - share 之后不能再滚
+            if (targetIndex > sections.length - 1) return;
+
+            const direction = targetIndex > currentSectionIndex ? 'next' : 'prev';
+            isTransitioning = true;
+            accumulatedDelta = 0; // 重置累积滚动量
+
+            const prevIndex = currentSectionIndex;
+            currentSectionIndex = targetIndex;
+
+            // 更新状态
+            sectionStates[prevIndex].phase = direction === 'next' ? SectionPhase.HIDDEN : SectionPhase.ACTIVE;
+            sectionStates[targetIndex].phase = SectionPhase.ACTIVE;
+
+            // 禁用所有wrapper滚动，启用当前wrapper
+            wrappers.forEach((w, i) => {
+                w.style.overflowY = i === targetIndex ? 'auto' : 'hidden';
+                if (i === targetIndex) {
+                    // 重置scroll位置用于新section
+                    if (direction === 'next') {
+                        w.scrollTop = 0;
+                        sectionStates[i].isAtTop = true;
+                        sectionStates[i].isAtBottom = false;
+                    }
+                }
+            });
+
+            // 更新模糊状态
+            updateBlurStates();
+
+            // 滚动到目标位置 - 使用更慢的动画让模糊渐变过程可见
+            const targetScroll = targetIndex * window.innerHeight;
+
+            gsap.to(window, {
+                duration: 1.2, // 增加动画持续时间，让滑动过程更明显
+                scrollTo: { y: targetScroll, autoKill: false },
+                ease: 'power2.inOut', // 使用更平滑的缓动
+                onComplete: () => {
+                    isTransitioning = false;
+                    updateNavHighlight(sectionOrder[targetIndex]);
+                }
+            });
+        }
+
+        // Wheel 事件处理 - 带吸附阻尼效果
+        function handleWheel(e) {
+            // 如果在最后一个section且已经到底，阻止继续向下滚动
+            if (currentSectionIndex === sections.length - 1) {
+                const currentState = sectionStates[currentSectionIndex];
+                if (currentState.isAtBottom && e.deltaY > 0) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (isTransitioning) {
                 e.preventDefault();
-                const targetId = this.getAttribute('data-target');
-                if (targetId) {
-                    const targetPosition = getScrollPosition(targetId);
-                    smoothScrollTo(targetPosition);
+                return;
+            }
+
+            const currentState = sectionStates[currentSectionIndex];
+            const deltaY = e.deltaY;
+
+            // 阻尼逻辑：在边界附近增加阻力
+            const isAtBoundary = currentState.isAtTop || currentState.isAtBottom;
+            const isScrollingOutward = (deltaY > 0 && currentState.isAtBottom) ||
+                                        (deltaY < 0 && currentState.isAtTop);
+
+            if (isAtBoundary && isScrollingOutward) {
+                // 累积滚动量
+                accumulatedDelta += Math.abs(deltaY);
+
+                // 未达到阈值时阻止默认行为并累积
+                if (accumulatedDelta < DAMPING_THRESHOLD) {
+                    e.preventDefault();
+
+                    // 应用阻尼效果 - 视觉反馈
+                    const currentWrapper = wrappers[currentSectionIndex];
+                    if (currentWrapper) {
+                        const resistance = 1 - (accumulatedDelta / DAMPING_THRESHOLD) * 0.3;
+                        // 轻微的视觉反馈
+                        currentWrapper.style.transform = `translateY(${deltaY > 0 ? -5 : 5} * ${1 - resistance}px)`;
+                        setTimeout(() => {
+                            currentWrapper.style.transform = '';
+                        }, 50);
+                    }
+                    return;
+                }
+
+                // 达到阈值，执行切换
+                accumulatedDelta = 0;
+
+                // 向下滚动
+                if (deltaY > 0 && currentSectionIndex < sections.length - 1) {
+                    e.preventDefault();
+                    goToSection(currentSectionIndex + 1);
+                    return;
+                }
+
+                // 向上滚动
+                if (deltaY < 0 && currentSectionIndex > 0) {
+                    e.preventDefault();
+                    goToSection(currentSectionIndex - 1);
+                    return;
+                }
+            } else {
+                // 不在边界或不是向外滚动，重置累积
+                accumulatedDelta = 0;
+
+                // 如果在内部滚动区域，允许默认行为
+                if (!currentState.isAtTop && deltaY < 0) return;
+                if (!currentState.isAtBottom && deltaY > 0) return;
+            }
+        }
+
+        // 触摸设备支持 - 同样带阻尼效果
+        let touchStartY = 0;
+        let touchAccumulatedDelta = 0;
+
+        function handleTouchStart(e) {
+            touchStartY = e.touches[0].clientY;
+            touchAccumulatedDelta = 0;
+        }
+
+        function handleTouchMove(e) {
+            // 如果在最后一个section且已经到底，阻止继续向下滚动
+            if (currentSectionIndex === sections.length - 1) {
+                const currentState = sectionStates[currentSectionIndex];
+                const touchY = e.touches[0].clientY;
+                const deltaY = touchStartY - touchY;
+                if (currentState.isAtBottom && deltaY > 0) {
+                    e.preventDefault();
+                    return;
+                }
+            }
+
+            if (isTransitioning) {
+                e.preventDefault();
+                return;
+            }
+
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchStartY - touchY;
+            const currentState = sectionStates[currentSectionIndex];
+            const currentWrapper = wrappers[currentSectionIndex];
+
+            // 灵敏度阈值
+            const threshold = 30;
+
+            // 在边界时累积
+            const isAtBoundary = currentState.isAtTop || currentState.isAtBottom;
+            const isScrollingOutward = (deltaY > threshold && currentState.isAtBottom) ||
+                                        (deltaY < -threshold && currentState.isAtTop);
+
+            if (isAtBoundary && Math.abs(deltaY) > threshold) {
+                touchAccumulatedDelta += Math.abs(deltaY);
+
+                if (touchAccumulatedDelta < DAMPING_THRESHOLD) {
+                    e.preventDefault();
+                    return;
+                }
+
+                touchAccumulatedDelta = 0;
+
+                // 向下滚动（手指向上滑）
+                if (deltaY > threshold && currentSectionIndex < sections.length - 1) {
+                    e.preventDefault();
+                    goToSection(currentSectionIndex + 1);
+                    touchStartY = touchY;
+                    return;
+                }
+
+                // 向上滚动（手指向下滑）
+                if (deltaY < -threshold && currentSectionIndex > 0) {
+                    e.preventDefault();
+                    goToSection(currentSectionIndex - 1);
+                    touchStartY = touchY;
+                    return;
+                }
+            }
+
+            // 检查是否可以内部滚动
+            if (deltaY > 0 && !currentState.isAtBottom) return; // 向下但未到顶
+            if (deltaY < 0 && !currentState.isAtTop) return; // 向上但未到顶
+        }
+
+        // 绑定事件
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        window.addEventListener('touchstart', handleTouchStart, { passive: true });
+        window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+        // 导航点击
+        document.querySelectorAll('.nav-anchor').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    const targetIndex = sectionOrder.indexOf(targetId || '');
+                    if (targetIndex >= 0) {
+                        goToSection(targetIndex);
+                    }
+                }
+            });
+        });
+
+        // 键盘导航
+        window.addEventListener('keydown', (e) => {
+            if (isTransitioning) return;
+
+            const currentState = sectionStates[currentSectionIndex];
+
+            if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                e.preventDefault();
+                if (currentState.isAtBottom && currentSectionIndex < sections.length - 1) {
+                    accumulatedDelta = DAMPING_THRESHOLD; // 跳过阻尼
+                    goToSection(currentSectionIndex + 1);
+                }
+            }
+            if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                e.preventDefault();
+                if (currentState.isAtTop && currentSectionIndex > 0) {
+                    accumulatedDelta = DAMPING_THRESHOLD; // 跳过阻尼
+                    goToSection(currentSectionIndex - 1);
                 }
             }
         });
-    });
 
-    // 导航高亮
-    const navAnchors = document.querySelectorAll('.nav-anchor');
+        function updateNavHighlight(activeId) {
+            document.querySelectorAll('.nav-anchor').forEach(anchor => {
+                if (anchor.getAttribute('data-target') === activeId) {
+                    anchor.classList.add('active');
+                } else {
+                    anchor.classList.remove('active');
+                }
+            });
+        }
 
-    function updateActiveNav() {
-        const scrollY = window.scrollY;
-        const vh = window.innerHeight;
+        // 设置 body 高度 - 最后一个section只给1vh的滚动空间
+        const totalHeight = sections.length * window.innerHeight;
+        document.body.style.height = `${totalHeight}px`;
 
-        let currentSection = 'home';
+        // 窗口大小改变时重新初始化
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                cleanup();
+                initGSAPAnimations();
+            }, 300);
+        });
 
-        if (!document.getElementById('home')) return;
+        // 初始化模糊状态
+        updateBlurStates();
+    }
 
-        if (window.innerWidth <= 768) {
+    // 检查是否支持减少动画偏好
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+        initSimpleNavigation();
+    } else {
+        initGSAPAnimations();
+    }
+
+    // 简单的导航功能（减少动画模式时使用）
+    function initSimpleNavigation() {
+        const sectionOrder = ['home', 'about', 'blog', 'portfolio', 'share'];
+
+        // 恢复默认样式
+        const sections = document.querySelectorAll('section');
+        sections.forEach((section) => {
+            section.style.position = 'relative';
+            section.style.opacity = '1';
+            section.style.visibility = 'visible';
+            section.style.transform = 'none';
+            section.style.height = 'auto';
+            section.style.minHeight = '100vh';
+        });
+        document.body.style.height = 'auto';
+
+        document.querySelectorAll('.nav-anchor').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('data-target');
+                    if (targetId) {
+                        const element = document.getElementById(targetId);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                }
+            });
+        });
+
+        const navAnchors = document.querySelectorAll('.nav-anchor');
+
+        function updateActiveNav() {
+            const vh = window.innerHeight;
+            let currentSection = 'home';
+
             for (const id of sectionOrder) {
                 const element = document.getElementById(id);
                 if (element) {
                     const rect = element.getBoundingClientRect();
-                    if (rect.top <= vh / 3 && rect.bottom >= vh / 3) {
+                    if (rect.top <= vh / 2 && rect.bottom >= vh / 2) {
                         currentSection = id;
                         break;
                     }
                 }
             }
-        } else {
-            let currentIndex = Math.round(scrollY / vh);
-            currentIndex = Math.min(currentIndex, sectionOrder.length - 1);
-            currentIndex = Math.max(currentIndex, 0);
-            currentSection = sectionOrder[currentIndex];
-        }
 
-        navAnchors.forEach(anchor => {
-            if (anchor.getAttribute('data-target') === currentSection) {
-                anchor.classList.add('active');
-            } else {
-                anchor.classList.remove('active');
-            }
-        });
-    }
-
-    window.addEventListener('scroll', updateActiveNav);
-    updateActiveNav();
-
-    // 移动端滚动拦截 - 确保section内容滚动完才切换到下一个
-    if (window.innerWidth <= 768) {
-        let currentSectionIndex = 0;
-        let isScrolling = false;
-        const scrollThreshold = 5; // 滚动到底部的容差
-
-        // 获取当前应该操作的section
-        function getCurrentSection() {
-            const scrollY = window.scrollY;
-            const vh = window.innerHeight;
-            const index = Math.round(scrollY / vh);
-            return {
-                index: Math.max(0, Math.min(index, sectionOrder.length - 1)),
-                id: sectionOrder[Math.max(0, Math.min(index, sectionOrder.length - 1))]
-            };
-        }
-
-        // 检查section是否可以内部滚动
-        function canScrollInside(sectionId: string, direction: 'up' | 'down') {
-            const section = document.getElementById(sectionId);
-            if (!section) return false;
-
-            const scrollTop = section.scrollTop;
-            const scrollHeight = section.scrollHeight;
-            const clientHeight = section.clientHeight;
-
-            if (direction === 'down') {
-                // 检查是否还能向下滚动
-                return scrollTop + clientHeight < scrollHeight - scrollThreshold;
-            } else {
-                // 检查是否还能向上滚动
-                return scrollTop > scrollThreshold;
-            }
-        }
-
-        // 处理wheel事件
-        window.addEventListener('wheel', (e) => {
-            const { id: currentId, index } = getCurrentSection();
-            const direction = e.deltaY > 0 ? 'down' : 'up';
-
-            // 如果当前section有未显示的内容，阻止页面滚动
-            if (canScrollInside(currentId, direction)) {
-                e.preventDefault();
-                const section = document.getElementById(currentId);
-                if (section) {
-                    section.scrollTop += e.deltaY;
+            navAnchors.forEach(anchor => {
+                if (anchor.getAttribute('data-target') === currentSection) {
+                    anchor.classList.add('active');
+                } else {
+                    anchor.classList.remove('active');
                 }
-            }
-        }, { passive: false });
+            });
+        }
 
-        // 处理touch事件
-        let touchStartY = 0;
-        let touchStartX = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            touchStartY = e.touches[0].clientY;
-            touchStartX = e.touches[0].clientX;
-        }, { passive: true });
-
-        document.addEventListener('touchmove', (e) => {
-            const touchY = e.touches[0].clientY;
-            const touchX = e.touches[0].clientX;
-            const deltaY = touchStartY - touchY;
-            const deltaX = touchStartX - touchX;
-
-            // 如果是水平滚动，不拦截
-            if (Math.abs(deltaX) > Math.abs(deltaY)) return;
-
-            const { id: currentId } = getCurrentSection();
-            const direction = deltaY > 0 ? 'down' : 'up';
-
-            // 如果当前section有未显示的内容，阻止页面滚动
-            if (canScrollInside(currentId, direction)) {
-                e.preventDefault();
-                const section = document.getElementById(currentId);
-                if (section) {
-                    section.scrollTop += deltaY;
-                }
-            }
-
-            touchStartY = touchY;
-        }, { passive: false });
+        window.addEventListener('scroll', updateActiveNav);
+        updateActiveNav();
     }
 </script>

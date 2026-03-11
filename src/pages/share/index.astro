@@ -1,151 +1,113 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const categories = [
-  {
-    name: 'Design',
-    items: [
-      { name: 'Figma', desc: '最强大的界面协作设计工具。', icon: 'ri-pencil-ruler-2-fill', url: 'https://figma.com' },
-      { name: 'Dribbble', desc: '寻找顶级设计师的灵感社区。', icon: 'ri-dribbble-line', url: 'https://dribbble.com' },
-      { name: 'Behance', desc: 'Adobe 旗下的创意作品展示平台。', icon: 'ri-behance-line', url: 'https://behance.net' }
-    ]
-  },
-  {
-    name: 'Development',
-    items: [
-      { name: 'GitHub', desc: '全球最大的开源代码托管平台。', icon: 'ri-github-fill', url: 'https://github.com' },
-      { name: 'Vercel', desc: '极速的前端部署与托管平台。', icon: 'ri-cloud-windy-fill', url: 'https://vercel.com' },
-      { name: 'CodePen', desc: '在线代码编辑和分享平台。', icon: 'ri-codepen-line', url: 'https://codepen.io' }
-    ]
-  },
-  {
-    name: 'Productivity',
-    items: [
-      { name: 'Notion', desc: '强大的笔记和知识管理工具。', icon: 'ri-sticky-note-line', url: 'https://notion.so' },
-      { name: 'Raycast', desc: 'Mac 上的高效启动器工具。', icon: 'ri-command-line', url: 'https://raycast.com' },
-      { name: 'Linear', desc: '优雅的团队项目管理工具。', icon: 'ri-team-line', url: 'https://linear.app' }
-    ]
-  }
+const tools = [
+  { name: 'Figma', desc: '界面协作设计', icon: 'ri-pencil-ruler-2-fill', url: 'https://figma.com' },
+  { name: 'Dribbble', desc: '设计师灵感社区', icon: 'ri-dribbble-line', url: 'https://dribbble.com' },
+  { name: 'GitHub', desc: '开源代码托管', icon: 'ri-github-fill', url: 'https://github.com' },
+  { name: 'Vercel', desc: '前端部署托管', icon: 'ri-cloud-windy-fill', url: 'https://vercel.com' },
+  { name: 'Notion', desc: '笔记知识管理', icon: 'ri-sticky-note-line', url: 'https://notion.so' },
+  { name: 'Raycast', desc: 'Mac 启动器', icon: 'ri-command-line', url: 'https://raycast.com' }
 ];
 ---
 
 <BaseLayout title="Share | Dar1an" description="好用的工具与资源推荐">
   <div class="page-content">
-    <h1 class="page-title">
-      <span class="en">Tools & Resources</span>
-      <span class="cn">工具与资源</span>
-    </h1>
-    <p class="page-desc">我在日常工作中经常使用的工具和资源，希望对你也有帮助。</p>
+    <header class="page-header">
+      <h1 class="page-title">
+        <span class="en">Tools & Resources</span>
+        <span class="cn">工具与资源</span>
+      </h1>
+    </header>
 
-    {categories.map(category => (
-      <section class="category">
-        <h2 class="category-title">{category.name}</h2>
-        <div class="tools-grid">
-          {category.items.map(tool => (
-            <a href={tool.url} target="_blank" class="tool-card">
-              <div class="tool-icon"><i class={tool.icon}></i></div>
-              <div class="tool-info">
-                <span class="tool-name">{tool.name}</span>
-                <span class="tool-desc">{tool.desc}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-    ))}
-
+    <div class="tools-grid">
+      {tools.map(tool => (
+        <a href={tool.url} target="_blank" class="tool-card">
+          <div class="tool-icon"><i class={tool.icon}></i></div>
+          <div class="tool-info">
+            <span class="tool-name">{tool.name}</span>
+            <span class="tool-desc">{tool.desc}</span>
+          </div>
+        </a>
+      ))}
+    </div>
   </div>
 </BaseLayout>
 
 <style>
   .page-content {
-    padding: 140px 10% 50px;
+    padding: 100px 10% 50px;
     padding-left: 140px;
     min-height: 100vh;
     width: 100%;
     box-sizing: border-box;
   }
 
+  .page-header {
+    margin-bottom: 60px;
+  }
+
   .page-title {
     font-size: 3rem;
     font-weight: 300;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .page-title .cn {
     font-size: 1.2rem;
     color: var(--text-muted);
     margin-top: 10px;
-  }
-
-  .page-desc {
-    color: var(--text-muted);
-    margin-bottom: 60px;
-    max-width: 500px;
-  }
-
-  .category {
-    margin-bottom: 60px;
-  }
-
-  .category-title {
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    margin-bottom: 25px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    display: block;
   }
 
   .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
   }
 
   .tool-card {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 20px 25px;
-    background: rgba(255,255,255,0.03);
+    gap: 20px;
+    padding: 30px;
+    background: var(--card-bg);
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 10px;
+    border-radius: 12px;
     transition: all 0.3s ease;
   }
 
   .tool-card:hover {
-    background: rgba(255,255,255,0.08);
+    transform: translateY(-5px);
     border-color: rgba(255,255,255,0.2);
-    transform: translateX(5px);
   }
 
   .tool-icon {
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: #fff;
-    width: 40px;
+    width: 48px;
     text-align: center;
   }
 
   .tool-info {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 6px;
   }
 
   .tool-name {
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 
   .tool-desc {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
   }
 
   @media (max-width: 768px) {
     .page-content {
-      padding: 120px 5% 100px;
+      padding: 100px 5% 80px;
     }
 
     .page-title {
@@ -154,6 +116,11 @@ const categories = [
 
     .tools-grid {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .tool-card {
+      padding: 25px;
     }
   }
 </style>

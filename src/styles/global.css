@@ -7,6 +7,15 @@
     --nav-height: 80px;
 }
 
+/* 隐藏内部滚动条 - 用于section-scroll-wrapper */
+.section-scroll-wrapper {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.section-scroll-wrapper::-webkit-scrollbar {
+    display: none;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -187,7 +196,7 @@ section {
     border-top: none;
 }
 
-#skills {
+#about {
     z-index: 2;
 }
 
@@ -311,8 +320,18 @@ h2.section-title span.sub {
     transform: scale(1.01);
 }
 
-.hero-img:hover img {
-    filter: grayscale(0%) blur(0px) brightness(1);
+/* Desktop: hover to clear blur */
+@media (hover: hover) and (pointer: fine) {
+    .hero-img:hover img {
+        filter: grayscale(0%) blur(0px) brightness(1);
+    }
+}
+
+/* Mobile: always blur, no hover effect */
+@media (hover: none) and (pointer: coarse) {
+    .hero-img img {
+        filter: grayscale(50%) blur(4px) brightness(0.85);
+    }
 }
 
 /* --- BLOG SECTION --- */
@@ -462,6 +481,14 @@ h2.section-title span.sub {
 /* --- SHARE SECTION --- */
 #share {
     background-color: #080808;
+    min-height: 100vh;
+    height: auto;
+}
+
+#share .section-scroll-content {
+    min-height: 100vh;
+    height: auto;
+    padding-bottom: 30px;
 }
 
 .share-grid {
@@ -535,8 +562,8 @@ footer {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 70%;
-    max-width: 300px;
+    width: 60%;
+    max-width: 280px;
     height: 100%;
     min-height: 100vh;
     background: rgba(5, 5, 5, 0.98);
@@ -544,8 +571,8 @@ footer {
     z-index: 3000;
     display: flex;
     flex-direction: column;
-    padding: 100px 30px 30px;
-    transition: right 0.3s ease;
+    padding: 100px 25px 30px;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     overflow-y: auto;
     overflow-x: hidden;
@@ -562,8 +589,21 @@ footer {
     padding: 15px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-muted);
-    transition: 0.3s;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(20px);
 }
+
+.mobile-nav.active .mobile-nav-link {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mobile-nav.active .mobile-nav-link:nth-child(1) { transition-delay: 0.08s; }
+.mobile-nav.active .mobile-nav-link:nth-child(2) { transition-delay: 0.16s; }
+.mobile-nav.active .mobile-nav-link:nth-child(3) { transition-delay: 0.24s; }
+.mobile-nav.active .mobile-nav-link:nth-child(4) { transition-delay: 0.32s; }
+.mobile-nav.active .mobile-nav-link:nth-child(5) { transition-delay: 0.40s; }
 
 .mobile-nav-link .en {
     font-size: 1.1rem;
@@ -775,7 +815,7 @@ footer {
 
     .hero-text {
         padding-right: 0;
-        margin-top: 20px;
+        margin-top: 15px;
         text-align: center;
         order: 2;
         z-index: 2;
@@ -796,18 +836,21 @@ footer {
 
     .hero-img {
         width: 100%;
+        height: 55vh;
         order: 1;
         margin-top: 0;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: center;
         flex-shrink: 0;
     }
 
     .hero-img img {
-        object-fit: contain;
-        object-position: center top;
-        max-height: 100%;
+        object-fit: cover;
+        object-position: center 20%;
+        height: 100%;
+        width: auto;
+        max-width: 100%;
     }
 
     .btn-connect {
@@ -931,8 +974,8 @@ footer {
     }
 }
 
-/* --- 横屏手机 (max-height: 500px and orientation: landscape) --- */
-@media (max-height: 500px) and (orientation: landscape) {
+/* --- 横屏手机 (max-height: 600px and orientation: landscape) --- */
+@media (max-height: 600px) and (orientation: landscape) {
     .mobile-menu-btn {
         display: block;
     }
@@ -942,10 +985,10 @@ footer {
     }
 
     .mobile-nav {
-        width: 50%;
-        max-width: 280px;
+        width: 45%;
+        max-width: 260px;
         height: 100vh;
-        padding: 80px 25px 25px;
+        padding: 70px 20px 20px;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
@@ -958,115 +1001,200 @@ footer {
         z-index: 3000;
     }
 
+    .mobile-nav-link {
+        padding: 12px 0;
+    }
+
+    .mobile-nav-link .en {
+        font-size: 1rem;
+    }
+
+    .mobile-nav-link .cn {
+        font-size: 0.75rem;
+    }
+
     section {
         padding-left: 5%;
         padding-right: 5%;
-        padding-top: 70px;
+        padding-top: 55px;
         position: sticky;
         top: 0;
         height: 100vh;
         min-height: auto;
-        padding-bottom: 80px;
+        padding-bottom: 15px;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
     }
 
     h2.section-title {
-        font-size: 1.6rem;
-        margin-bottom: 25px;
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        padding-top: 10px;
     }
 
+    h2.section-title span.sub {
+        font-size: 0.7rem;
+    }
+
+    /* 修复横屏home布局 - 左右布局，文字和图片各占50% */
     #home {
-        flex-direction: row;
-        padding-top: 70px;
+        flex-direction: row !important;
+        padding: 55px 5% 15px;
         height: 100vh;
         min-height: auto;
-        padding-bottom: 0;
-        align-items: flex-start;
-        justify-content: flex-start;
-        gap: 30px;
+        justify-content: center;
+        align-items: center;
+        gap: 4%;
         position: sticky;
         top: 0;
     }
 
     .hero-text {
         padding-right: 0;
-        margin-top: 50px;
+        margin-top: 0;
         text-align: left;
         order: 1;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-self: flex-start;
+        z-index: 2;
+        flex: 0 0 48%;
+        max-width: 48%;
+        flex-shrink: 0;
     }
 
     .hero-text h1 {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-
-    .hero-text p {
-        font-size: 0.85rem;
+        font-size: 1.8rem;
+        line-height: 1.15;
         margin-bottom: 8px;
     }
 
-    .btn-connect {
-        margin-top: 15px;
-        padding: 8px 25px;
-        align-self: flex-start;
+    .hero-text p {
+        font-size: 0.8rem;
+        line-height: 1.4;
     }
 
     .hero-img {
-        height: calc(100vh - 70px - 30px);
+        flex: 0 0 48%;
+        height: 70vh;
         width: auto;
-        max-width: 45%;
+        max-width: 48%;
         order: 2;
         margin-top: 0;
-        align-self: flex-start;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
     }
 
     .hero-img img {
         object-fit: cover;
-        object-position: center top;
+        object-position: center center;
         height: 100%;
-        width: auto;
+        width: 100%;
         max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .btn-connect {
+        padding: 6px 20px;
+        margin-top: 15px;
+    }
+
+    .btn-connect .en {
+        font-size: 0.75rem;
+    }
+
+    .btn-connect .cn {
+        font-size: 0.6rem;
     }
 
     .skills-showcase {
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
+        margin-top: 15px;
     }
 
     .skill-block {
-        padding: 20px;
+        padding: 15px;
+    }
+
+    .skill-header {
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .skill-header i {
+        font-size: 1.4rem;
+    }
+
+    .skill-cat {
+        font-size: 0.9rem;
+    }
+
+    .skill-items li {
+        font-size: 0.8rem;
+        padding-left: 12px;
     }
 
     .works-gallery {
         grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
+        gap: 12px;
         height: auto;
         max-height: none;
         overflow-y: visible;
+        margin-top: 15px;
     }
 
     .work-item {
-        height: 150px;
+        height: 130px;
     }
 
     .work-info {
-        bottom: 15px;
-        left: 15px;
+        bottom: 12px;
+        left: 12px;
     }
 
     .work-info h4 {
-        font-size: 0.9rem;
-        margin-bottom: 3px;
+        font-size: 0.85rem;
+        margin-bottom: 2px;
     }
 
     .work-info p {
+        font-size: 0.7rem;
+    }
+
+    .blog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .blog-card {
+        padding: 18px;
+    }
+
+    .blog-card h3 {
+        font-size: 0.9rem;
+    }
+
+    .blog-card p {
         font-size: 0.75rem;
+        margin-top: 6px;
+    }
+
+    .share-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .tool-card {
+        padding: 15px;
+    }
+
+    .tool-icon {
+        font-size: 1.5rem;
+    }
+
+    footer {
+        padding: 15px;
+        font-size: 0.7rem;
     }
 }

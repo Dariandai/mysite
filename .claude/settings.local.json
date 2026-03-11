@@ -12,7 +12,9 @@
       "mcp__playwright__browser_run_code",
       "Bash(python:*)",
       "mcp__mcpServers__read_note",
-      "mcp__EXA__web_search_exa"
+      "mcp__EXA__web_search_exa",
+      "mcp__EXA__get_code_context_exa"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": true
 }

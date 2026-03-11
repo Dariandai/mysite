@@ -3,117 +3,609 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="File Tools | Dar1an" description="本地文件智能检索与问答系统">
-  <article class="project-detail">
+  <!-- 1. 项目概览 -->
+  <section id="overview">
     <header class="project-header">
-      <span class="project-category">Python / Desktop App</span>
+      <span class="project-category">Python / Desktop App / RAG</span>
       <h1 class="project-title">
         <span class="en">File Tools</span>
         <span class="cn">本地文件智能检索与问答系统</span>
       </h1>
     </header>
-
     <div class="project-image-full">
       <img src="https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png" alt="File Tools" />
     </div>
+    <div class="project-intro">
+      <p>随着本地文件数量快速增长和隐私保护需求增强，开发的一款完全离线运行的智能文件检索工具。结合快速文件索引技术和本地/在线大语言模型，实现高效的文件搜索、内容问答和个性化推荐功能。</p>
+      <div class="tech-tags">
+        <span>FastAPI</span>
+        <span>Pywebview</span>
+        <span>Tantivy</span>
+        <span>HNSWLib</span>
+        <span>llama-cpp-python</span>
+      </div>
+    </div>
+  </section>
 
-    <div class="project-content">
-      <section class="project-section">
-        <h2>项目背景</h2>
-        <p>随着本地文件数量快速增长和隐私保护需求增强，用户需要一款完全离线运行的智能文件检索工具。本项目旨在开发一个基于Python的智能文件助手，结合快速文件索引技术和本地/在线大语言模型，实现高效的文件搜索、内容问答和等功能。</p>
-      </section>
-
-      <section class="project-section">
-        <h2>核心功能</h2>
-        <ul>
-          <li><strong>混合检索</strong>：关键词检索（Tantivy）+ 语义检索（HNSWLib），按权重融合排序</li>
-          <li><strong>智能问答</strong>：RAG 流程，先检索相关文档片段，再让 LLM 生成答案，带引用溯源</li>
-          <li><strong>多格式支持</strong>：PDF、Word、Excel、PPT、Markdown 等常见办公文档</li>
-          <li><strong>实时监控</strong>：文件增删改自动触发索引增量更新，不用手动重建</li>
-          <li><strong>会话管理</strong>：支持多轮对话，历史记录自动保存，可随时切换话题</li>
-        </ul>
-      </section>
-
-      <section class="project-section">
-        <h2>技术架构</h2>
-        <p><strong>后端：</strong>FastAPI 提供 RESTful API，模块化路由设计（搜索、聊天、配置、目录管理相互独立）</p>
-        <p><strong>桌面端：</strong>Pywebview 封装 Web 界面为原生窗口，避免浏览器跨域限制，体验更接近传统软件</p>
-        <p><strong>检索引擎：</strong>Tantivy 负责全文检索（基于 Rust，速度快内存占用低），HNSWLib 处理向量相似度搜索</p>
-        <p><strong>嵌入模型：</strong>FastEmbed 生成文档向量，默认使用 bge-small-zh，本地产出无需联网</p>
-        <p><strong>LLM 推理：</strong>llama-cpp-python 本地加载 GGUF 模型，支持 Phi、Qwen、Llama 等主流模型</p>
-      </section>
-
-      <section class="project-section">
-        <h2>RAG 实现细节</h2>
-        <p>整个问答流程分三步走：</p>
-        <ul>
-          <li><strong>检索：</strong>用户提问后，先用嵌入模型转成向量，在 HNSW 索引里找 Top-K 相似文档；同时用 Tantivy 做关键词匹配。两个分数按权重（默认 6:4）融合，重排序后取最相关的片段。</li>
-          <li><strong>构造 Prompt：</strong>把检索到的文档片段拼进系统提示词，加上对话历史，组成完整的上下文。</li>
-          <li><strong>生成：</strong>调用本地 LLM 生成回答，同时返回引用的源文档，方便用户核对。</li>
-        </ul>
-        <p>这样设计的好处是即使 LLM 没有答对，用户也能追溯到原始文档自行判断。</p>
-      </section>
-
-      <section class="project-section">
-        <h2>性能表现</h2>
-        <ul>
-          <li>关键词检索：&lt; 1 秒（10 万文档规模）</li>
-          <li>语义检索：&lt; 3 秒（向量维度 768，HNSW 索引）</li>
-          <li>问答生成：&lt; 5 秒（RTX 3060 加载 Qwen2.5-7B-Q6_K）</li>
-          <li>内存占用：索引构建时峰值约 8GB，运行时稳定在 4GB 左右</li>
-        </ul>
-      </section>
-
-      <section class="project-section">
-        <h2>遇到的坑</h2>
-        <p><strong>WSL2 文件监听失效：</strong>Windows 侧的文件变动，WSL2 里的 Python watchdog 有时收不到事件。最后妥协方案是 Windows 下用原生 Python 跑文件监控，通过 HTTP 通知 WSL 里的服务更新索引。</p>
-        <p><strong>PDF 解析乱码：</strong>有些扫描版 PDF 文字层和图像层错位，pdfminer 提取出来是乱码。试了 PyMuPDF、pdfplumber 好几个库，最后用启发式规则组合解决，准确率提升到 95% 以上。</p>
-        <p><strong>显存爆炸：</strong>一开始贪心想跑 13B 模型，结果 12G 显存直接 OOM。后来学会用 Q4_K_M 量化，配合 --gpu-memory-utilization 参数限制显存占用，7B 模型流畅运行。</p>
-      </section>
-
-      <section class="project-section">
-        <h2>后续计划</h2>
-        <ul>
-          <li>OCR 支持：扫描版 PDF 目前识别率还不够理想，打算接入 PaddleOCR</li>
-          <li>插件系统：允许用户自定义文档解析器和检索策略</li>
-          <li>跨平台打包：目前只能在 Windows+WSL 跑，想做成真正的单文件绿色版</li>
-        </ul>
-      </section>
-
-      <section class="project-section">
-        <h2>技术栈</h2>
-        <p>FastAPI · Pywebview · Tantivy · HNSWLib · llama-cpp-python · FastEmbed</p>
-      </section>
-
-      <section class="project-section">
-        <h2>GitHub</h2>
-        <p>
-          <a href="https://github.com/Dry-U/File-tools" target="_blank" class="project-link">
-            github.com/Dry-U/File-tools
-          </a>
-        </p>
-      </section>
+  <!-- 2. 技术架构 -->
+  <section id="architecture">
+    <h2 class="section-title">技术架构</h2>
+    <div class="arch-content">
+      <div class="arch-item">
+        <h3>后端服务</h3>
+        <p>FastAPI 提供 RESTful API，模块化路由设计（搜索、聊天、配置、目录管理相互独立）</p>
+      </div>
+      <div class="arch-item">
+        <h3>桌面端</h3>
+        <p>Pywebview 封装 Web 界面为原生窗口，避免浏览器跨域限制，体验更接近传统软件</p>
+      </div>
+      <div class="arch-item">
+        <h3>检索引擎</h3>
+        <p>Tantivy 负责全文检索（基于 Rust，速度快内存占用低），HNSWLib 处理向量相似度搜索</p>
+      </div>
+      <div class="arch-item">
+        <h3>AI 能力</h3>
+        <p>FastEmbed 生成文档向量，llama-cpp-python 本地加载 GGUF 模型，支持 Phi、Qwen、Llama 等</p>
+      </div>
     </div>
 
-    <footer class="project-footer">
-      <!-- Back button moved to BaseLayout -->
-    </footer>
-  </article>
+    <div class="rag-section">
+      <h3>项目架构</h3>
+      <div class="arch-diagram">
+        <div class="arch-layer">
+          <div class="arch-box">用户界面层<br><small>Pywebview + Bootstrap</small></div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer">
+          <div class="arch-box">API 接口层<br><small>FastAPI 模块化路由</small></div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer">
+          <div class="arch-box">核心业务层<br><small>IndexManager / SearchEngine / RAGPipeline</small></div>
+        </div>
+        <div class="arch-arrow">↓</div>
+        <div class="arch-layer">
+          <div class="arch-box">数据存储层<br><small>Tantivy / HNSWLib / SQLite</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. 核心功能 -->
+  <section id="features">
+    <h2 class="section-title">核心功能</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>混合检索</h3>
+        <p>关键词检索（Tantivy BM25）+ 语义检索（HNSWLib），按权重融合排序</p>
+      </div>
+      <div class="feature-card">
+        <h3>智能问答</h3>
+        <p>RAG 流程，先检索相关文档片段，再让 LLM 生成答案，带引用溯源</p>
+      </div>
+      <div class="feature-card">
+        <h3>多格式支持</h3>
+        <p>PDF、Word、Excel、PPT、Markdown 等常见办公文档</p>
+      </div>
+      <div class="feature-card">
+        <h3>实时监控</h3>
+        <p>文件增删改自动触发索引增量更新，不用手动重建</p>
+      </div>
+      <div class="feature-card">
+        <h3>设置持久化</h3>
+        <p>前端设置通过 API 保存到 YAML 配置文件，重启后依然有效</p>
+      </div>
+      <div class="feature-card">
+        <h3>会话管理</h3>
+        <p>智能问答支持多会话历史记录，服务器端维护，刷新不丢失</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. RAG 实现 -->
+  <section id="rag">
+    <h2 class="section-title">RAG 实现流程</h2>
+    <div class="rag-flow">
+      <div class="rag-step">
+        <div class="rag-step-num">1</div>
+        <div class="rag-step-content">
+          <h4>检索</h4>
+          <p>用户提问后，先用嵌入模型转成向量，在 HNSW 索引里找 Top-K 相似文档；同时用 Tantivy 做关键词匹配。两个分数按权重（默认 6:4）融合，重排序后取最相关的片段。</p>
+        </div>
+      </div>
+      <div class="rag-step">
+        <div class="rag-step-num">2</div>
+        <div class="rag-step-content">
+          <h4>构造 Prompt</h4>
+          <p>把检索到的文档片段拼进系统提示词，加上对话历史，组成完整的上下文。</p>
+        </div>
+      </div>
+      <div class="rag-step">
+        <div class="rag-step-num">3</div>
+        <div class="rag-step-content">
+          <h4>生成</h4>
+          <p>调用本地 LLM 或 API 生成回答，同时返回引用的源文档，方便用户核对。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. 使用指南 -->
+  <section id="usage">
+    <div class="usage-grid">
+      <div class="usage-col">
+        <h2 class="section-title">安装与启动</h2>
+        <div class="code-block">
+          <pre><code># 克隆项目
+git clone https://github.com/Dry-U/File-tools.git
+cd File-tools
+
+# 安装依赖（推荐 uv）
+uv sync
+
+# 启动应用
+uv run python main.py</code></pre>
+        </div>
+        <ul class="feature-list">
+          <li>启动后自动打开桌面窗口</li>
+          <li>API 服务运行在 127.0.0.1:8000</li>
+          <li>支持 Windows / macOS / Linux</li>
+        </ul>
+      </div>
+      <div class="usage-col">
+        <h2 class="section-title">快速配置</h2>
+        <div class="code-block">
+          <pre><code># config.yaml 示例
+ai_model:
+  enabled: true
+  mode: "api"  # 或 "local"
+  api:
+    provider: "siliconflow"
+    api_key: "your-api-key"
+    model_name: "deepseek-ai/DeepSeek-V2.5"
+
+file_scanner:
+  scan_paths:
+    - "C:/Users/Name/Documents"</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. GitHub 链接 -->
+  <section id="github">
+    <div class="github-section">
+      <div class="github-content">
+        <h2 class="section-title">开源项目</h2>
+        <p class="github-desc">File Tools 是一个开源项目，欢迎提交 Issue 和 Pull Request！</p>
+        <div class="github-stats">
+          <div class="stat-item">
+            <i class="ri-github-fill"></i>
+            <span>Dry-U/File-tools</span>
+          </div>
+        </div>
+      </div>
+      <div class="github-link">
+        <a href="https://github.com/Dry-U/File-tools" target="_blank" class="btn-primary">
+          <i class="ri-github-fill"></i>
+          <span>View on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
 
-<style>
-  .project-detail {
-    padding: 180px 10% 50px;
-    padding-left: 140px;
-    min-height: 100vh;
-    width: 100%;
-    box-sizing: border-box;
-    position: relative;
+<script>
+  // GSAP Stacking Cards - Same as home page
+  function initGSAPAnimations() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      setTimeout(initGSAPAnimations, 100);
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const sections = document.querySelectorAll('section');
+    const sectionOrder = ['overview', 'architecture', 'features', 'rag', 'usage', 'github'];
+
+    const SectionPhase = {
+      HIDDEN: 'hidden',
+      ENTERING: 'entering',
+      ACTIVE: 'active',
+      EXITING: 'exiting'
+    };
+
+    const sectionStates = Array.from(sections).map(() => ({
+      phase: SectionPhase.HIDDEN,
+      isAtTop: true,
+      isAtBottom: false,
+      wrapper: null
+    }));
+
+    sectionStates[0].phase = SectionPhase.ACTIVE;
+    sectionStates[0].isAtTop = true;
+
+    let currentSectionIndex = 0;
+    let isTransitioning = false;
+    let accumulatedDelta = 0;
+    const DAMPING_THRESHOLD = 400;
+
+    const isMobile = () => window.innerWidth <= 768;
+    const isLandscape = () => window.innerHeight <= 500 && window.innerWidth > window.innerHeight;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function cleanup() {
+      sections.forEach(section => {
+        const existingWrapper = section.querySelector('.section-scroll-wrapper');
+        if (existingWrapper) {
+          const content = existingWrapper.querySelector('.section-scroll-content');
+          if (content) {
+            const children = Array.from(content.children);
+            children.forEach(child => section.appendChild(child));
+          }
+          existingWrapper.remove();
+        }
+        const existingOverlay = section.querySelector('.blur-overlay');
+        if (existingOverlay) existingOverlay.remove();
+      });
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    }
+
+    cleanup();
+
+    sections.forEach((section, index) => {
+      const zIndex = (index + 1) * 10;
+      section.setAttribute('data-gsap', 'true');
+      section.style.zIndex = String(zIndex);
+      section.style.position = 'sticky';
+      section.style.top = '0';
+      section.style.left = '0';
+      section.style.width = '100%';
+      section.style.height = '100vh';
+      section.style.opacity = '1';
+      section.style.overflow = 'hidden';
+      section.style.backgroundColor = 'var(--bg-color, #050505)';
+    });
+
+    const wrappers = [];
+    sections.forEach((section, index) => {
+      const children = Array.from(section.children);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'section-scroll-wrapper';
+      wrapper.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow-y: ${index === 0 ? 'auto' : 'hidden'};
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        z-index: 1;
+      `;
+
+      const content = document.createElement('div');
+      content.className = 'section-scroll-content';
+      const landscapeFlag = isLandscape();
+      const mobileFlag = isMobile();
+      content.style.cssText = `
+        min-height: 100vh;
+        padding: ${mobileFlag ? '80px 5% 60px' : (landscapeFlag ? '60px 5% 20px' : '100px 10% 50px 140px')};
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        overflow-x: hidden;
+      `;
+
+      children.forEach(child => content.appendChild(child));
+      wrapper.appendChild(content);
+      section.appendChild(wrapper);
+      wrappers.push(wrapper);
+      sectionStates[index].wrapper = wrapper;
+
+      if (index === sections.length - 1) return;
+
+      const blurOverlay = document.createElement('div');
+      blurOverlay.className = 'blur-overlay';
+      blurOverlay.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(0px);
+        background: rgba(5, 5, 5, 0);
+        pointer-events: none;
+        z-index: 9999;
+        transition: backdrop-filter 0.3s ease, background 0.3s ease;
+      `;
+      section.appendChild(blurOverlay);
+    });
+
+    function updateBlurStates() {
+      sections.forEach((section, index) => {
+        const blurOverlay = section.querySelector('.blur-overlay');
+        if (!blurOverlay) return;
+
+        if (index < currentSectionIndex) {
+          gsap.to(blurOverlay, {
+            backdropFilter: 'blur(15px)',
+            background: 'rgba(5, 5, 5, 0.6)',
+            duration: 1.0,
+            ease: 'power2.inOut'
+          });
+        } else {
+          gsap.to(blurOverlay, {
+            backdropFilter: 'blur(0px)',
+            background: 'rgba(5, 5, 5, 0)',
+            duration: 1.0,
+            ease: 'power2.inOut'
+          });
+        }
+      });
+    }
+
+    wrappers.forEach((wrapper, index) => {
+      wrapper.addEventListener('scroll', () => {
+        if (sectionStates[index].phase !== SectionPhase.ACTIVE) return;
+        const { scrollTop, scrollHeight, clientHeight } = wrapper;
+        sectionStates[index].isAtTop = scrollTop <= 5;
+        sectionStates[index].isAtBottom = scrollTop + clientHeight >= scrollHeight - 5;
+      }, { passive: true });
+    });
+
+    function goToSection(targetIndex) {
+      if (isTransitioning || targetIndex < 0 || targetIndex >= sections.length) return;
+      if (targetIndex === currentSectionIndex) return;
+      if (targetIndex > sections.length - 1) return;
+
+      const direction = targetIndex > currentSectionIndex ? 'next' : 'prev';
+      isTransitioning = true;
+      accumulatedDelta = 0;
+
+      const prevIndex = currentSectionIndex;
+      currentSectionIndex = targetIndex;
+
+      sectionStates[prevIndex].phase = direction === 'next' ? SectionPhase.HIDDEN : SectionPhase.ACTIVE;
+      sectionStates[targetIndex].phase = SectionPhase.ACTIVE;
+
+      wrappers.forEach((w, i) => {
+        w.style.overflowY = i === targetIndex ? 'auto' : 'hidden';
+        if (i === targetIndex) {
+          if (direction === 'next') {
+            w.scrollTop = 0;
+            sectionStates[i].isAtTop = true;
+            sectionStates[i].isAtBottom = false;
+          }
+        }
+      });
+
+      updateBlurStates();
+
+      const targetScroll = targetIndex * window.innerHeight;
+
+      gsap.to(window, {
+        duration: 1.2,
+        scrollTo: { y: targetScroll, autoKill: false },
+        ease: 'power2.inOut',
+        onComplete: () => {
+          isTransitioning = false;
+        }
+      });
+    }
+
+    function handleWheel(e) {
+      if (currentSectionIndex === sections.length - 1) {
+        const currentState = sectionStates[currentSectionIndex];
+        if (currentState.isAtBottom && e.deltaY > 0) {
+          e.preventDefault();
+          return;
+        }
+      }
+
+      if (isTransitioning) {
+        e.preventDefault();
+        return;
+      }
+
+      const currentState = sectionStates[currentSectionIndex];
+      const deltaY = e.deltaY;
+
+      const isAtBoundary = currentState.isAtTop || currentState.isAtBottom;
+      const isScrollingOutward = (deltaY > 0 && currentState.isAtBottom) ||
+                                  (deltaY < 0 && currentState.isAtTop);
+
+      if (isAtBoundary && isScrollingOutward) {
+        accumulatedDelta += Math.abs(deltaY);
+
+        if (accumulatedDelta < DAMPING_THRESHOLD) {
+          e.preventDefault();
+          return;
+        }
+
+        accumulatedDelta = 0;
+
+        if (deltaY > 0 && currentSectionIndex < sections.length - 1) {
+          e.preventDefault();
+          goToSection(currentSectionIndex + 1);
+          return;
+        }
+
+        if (deltaY < 0 && currentSectionIndex > 0) {
+          e.preventDefault();
+          goToSection(currentSectionIndex - 1);
+          return;
+        }
+      } else {
+        accumulatedDelta = 0;
+        if (!currentState.isAtTop && deltaY < 0) return;
+        if (!currentState.isAtBottom && deltaY > 0) return;
+      }
+    }
+
+    let touchStartY = 0;
+    let touchAccumulatedDelta = 0;
+
+    function handleTouchStart(e) {
+      touchStartY = e.touches[0].clientY;
+      touchAccumulatedDelta = 0;
+    }
+
+    function handleTouchMove(e) {
+      if (currentSectionIndex === sections.length - 1) {
+        const currentState = sectionStates[currentSectionIndex];
+        const touchY = e.touches[0].clientY;
+        const deltaY = touchStartY - touchY;
+        if (currentState.isAtBottom && deltaY > 0) {
+          e.preventDefault();
+          return;
+        }
+      }
+
+      if (isTransitioning) {
+        e.preventDefault();
+        return;
+      }
+
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartY - touchY;
+      const currentState = sectionStates[currentSectionIndex];
+
+      const threshold = 30;
+      const isAtBoundary = currentState.isAtTop || currentState.isAtBottom;
+      const isScrollingOutward = (deltaY > threshold && currentState.isAtBottom) ||
+                                  (deltaY < -threshold && currentState.isAtTop);
+
+      if (isAtBoundary && Math.abs(deltaY) > threshold) {
+        touchAccumulatedDelta += Math.abs(deltaY);
+
+        if (touchAccumulatedDelta < DAMPING_THRESHOLD) {
+          e.preventDefault();
+          return;
+        }
+
+        touchAccumulatedDelta = 0;
+
+        if (deltaY > threshold && currentSectionIndex < sections.length - 1) {
+          e.preventDefault();
+          goToSection(currentSectionIndex + 1);
+          touchStartY = touchY;
+          return;
+        }
+
+        if (deltaY < -threshold && currentSectionIndex > 0) {
+          e.preventDefault();
+          goToSection(currentSectionIndex - 1);
+          touchStartY = touchY;
+          return;
+        }
+      }
+
+      if (deltaY > 0 && !currentState.isAtBottom) return;
+      if (deltaY < 0 && !currentState.isAtTop) return;
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+      if (isTransitioning) return;
+      const currentState = sectionStates[currentSectionIndex];
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        e.preventDefault();
+        if (currentState.isAtBottom && currentSectionIndex < sections.length - 1) {
+          accumulatedDelta = DAMPING_THRESHOLD;
+          goToSection(currentSectionIndex + 1);
+        }
+      }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        if (currentState.isAtTop && currentSectionIndex > 0) {
+          accumulatedDelta = DAMPING_THRESHOLD;
+          goToSection(currentSectionIndex - 1);
+        }
+      }
+    });
+
+    const totalHeight = sections.length * window.innerHeight;
+    document.body.style.height = `${totalHeight}px`;
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        cleanup();
+        initGSAPAnimations();
+      }, 300);
+    });
+
+    updateBlurStates();
   }
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion) {
+    initSimpleNavigation();
+  } else {
+    initGSAPAnimations();
+  }
+
+  function initSimpleNavigation() {
+    const sections = document.querySelectorAll('section');
+    sections.forEach((section) => {
+      section.style.position = 'relative';
+      section.style.opacity = '1';
+      section.style.visibility = 'visible';
+      section.style.transform = 'none';
+      section.style.height = 'auto';
+      section.style.minHeight = '100vh';
+    });
+    document.body.style.height = 'auto';
+  }
+</script>
+
+<style>
+  /* Sticky sections matching home page */
+  section {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: var(--bg-color, #050505);
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .section-scroll-content {
+    padding: 80px 10% 40px 140px;
+    box-sizing: border-box;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Project Header */
   .project-header {
-    margin-bottom: 40px;
-    position: relative;
-    z-index: 2;
+    margin-bottom: 20px;
+    margin-top: 0;
   }
 
   .project-category {
@@ -122,99 +614,452 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     text-transform: uppercase;
     letter-spacing: 2px;
     display: block;
+    margin-bottom: 10px;
   }
 
   .project-title {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 300;
-    margin-top: 15px;
     display: flex;
     flex-direction: column;
     line-height: 1.3;
   }
 
   .project-title .cn {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     color: var(--text-muted);
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .project-image-full {
-    margin-top: 20px;
-    margin-bottom: 60px;
+    margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
-    position: relative;
-    z-index: 1;
   }
 
   .project-image-full img {
     width: 100%;
     height: auto;
+    max-height: 240px;
+    object-fit: cover;
     display: block;
   }
 
-  .project-content {
-    max-width: none;
+  .project-intro p {
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
   }
 
-  .project-section {
-    margin-bottom: 50px;
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
-  .project-section h2 {
-    font-size: 1.3rem;
-    font-weight: 400;
+  .tech-tags span {
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* Section Title */
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 300;
     margin-bottom: 20px;
+    margin-top: 0;
+  }
+
+  /* Architecture */
+  .arch-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .arch-item h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
     color: var(--text-main);
   }
 
-  .project-section p {
+  .arch-item p {
+    font-size: 0.9rem;
     color: var(--text-muted);
-    line-height: 1.8;
+    line-height: 1.6;
   }
 
-  .project-section ul {
-    margin-left: 20px;
-    color: var(--text-muted);
-    line-height: 2;
+  .rag-section {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
   }
 
-  .project-link {
-    color: var(--text-muted);
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    transition: color 0.3s;
+  .rag-section h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+    margin-top: 0;
   }
 
-  .project-link:hover {
+  /* Architecture Diagram */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .arch-layer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .arch-box {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 15px 25px;
+    text-align: center;
+    font-size: 0.9rem;
+    min-width: 280px;
+  }
+
+  .arch-box small {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+
+  .arch-arrow {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+  }
+
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-3px);
+  }
+
+  .feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    margin-top: 0;
     color: var(--text-main);
   }
 
-  .project-footer {
-    margin-top: 80px;
-    padding-top: 40px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+  .feature-card p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
   }
 
+  /* RAG Flow */
+  .rag-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .rag-step {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .rag-step-num {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .rag-step-content {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .rag-step-content h4 {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-main);
+  }
+
+  .rag-step-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  /* Usage Grid */
+  .usage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 15px;
+    overflow-x: auto;
+    margin-bottom: 15px;
+  }
+
+  .code-block pre {
+    margin: 0;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #ccc;
+  }
+
+  .feature-list {
+    list-style: none;
+  }
+
+  .feature-list li {
+    padding: 8px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .feature-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #4ade80;
+  }
+
+  /* GitHub Section */
+  .github-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: center;
+  }
+
+  .github-desc {
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 25px;
+  }
+
+  .github-stats {
+    display: flex;
+    gap: 30px;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .stat-item i {
+    font-size: 1.5rem;
+  }
+
+  .github-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 35px;
+    background: var(--text-main);
+    color: var(--bg-color);
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255,255,255,0.15);
+  }
+
+  .btn-primary i {
+    font-size: 1.4rem;
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
-    .project-detail {
-      padding: 120px 5% 100px;
-      overflow-y: auto;
+    section {
+      height: auto;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 100vw;
+      left: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .section-scroll-content {
+      padding: 80px 5% 60px !important;
+      min-height: 100vh;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
+      overflow-x: hidden;
     }
 
     .project-header {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      margin-top: 0;
+    }
+
+    .project-category {
+      font-size: 0.75rem;
+      margin-bottom: 8px;
     }
 
     .project-title {
-      font-size: 1.8rem;
+      font-size: 1.4rem;
       line-height: 1.3;
     }
 
+    .project-title .cn {
+      font-size: 0.95rem;
+      margin-top: 6px;
+    }
+
     .project-image-full {
-      margin-top: 40px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
+    }
+
+    .project-image-full img {
+      max-height: 180px;
+    }
+
+    .project-intro p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .tech-tags {
+      gap: 8px;
+    }
+
+    .tech-tags span {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .arch-content {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+
+    .arch-box {
+      min-width: auto;
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 0.85rem;
+    }
+
+    .rag-step {
+      gap: 12px;
+    }
+
+    .rag-step-num {
+      width: 32px;
+      height: 32px;
+      font-size: 0.9rem;
+    }
+
+    .rag-step-content {
+      padding: 15px;
+    }
+
+    .rag-step-content h4 {
+      font-size: 0.95rem;
+    }
+
+    .rag-step-content p {
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    .usage-grid,
+    .github-section {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+
+    .feature-card,
+    .rag-section,
+    .rag-step-content {
+      padding: 18px;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .code-block {
+      padding: 15px;
+    }
+
+    .code-block pre {
+      font-size: 0.7rem;
+    }
+
+    .btn-primary {
+      padding: 14px 28px;
+      font-size: 0.9rem;
     }
   }
 </style>
