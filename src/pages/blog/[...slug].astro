@@ -2,9 +2,9 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
-  const posts = await Astro.glob('../../content/posts/*.md');
+  const allPosts = import.meta.glob('../../content/posts/*.md', { eager: true });
 
-  return posts.map(post => {
+  return Object.values(allPosts).map((post: any) => {
     const slug = post.file.split('/').pop().replace('.md', '');
     return {
       params: { slug },
@@ -26,6 +26,7 @@ const { Content } = post;
         <span class="en">{title}</span>
         <span class="cn">{titleCn}</span>
       </h1>
+      {description && <p class="post-description">{description}</p>}
     </header>
 
     <div class="post-content">
@@ -37,16 +38,15 @@ const { Content } = post;
 
 <style>
   .blog-post {
-    padding: 100px 10% 50px;
-    padding-left: 140px;
+    padding: 100px 10% 50px 140px;
     min-height: 100vh;
     width: 100%;
     box-sizing: border-box;
   }
 
   .post-header {
-    margin-bottom: 60px;
-    padding-bottom: 10px;
+    margin-bottom: 40px;
+    padding-bottom: 0;
   }
 
   .post-content {
@@ -86,13 +86,24 @@ const { Content } = post;
 
   .post-title .cn {
     font-size: 1.3rem;
-    color: var(--text-muted);
-    margin-top: 16px;
+    color: #888;
+    margin-top: 4px;
+    margin-bottom: 20px;
     display: block;
     width: 100%;
     word-wrap: break-word;
     overflow-wrap: break-word;
     line-height: 1.5;
+    clear: both;
+  }
+
+  .post-description {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    font-style: italic;
   }
 
   .post-content :global(p) {
@@ -128,10 +139,11 @@ const { Content } = post;
     }
 
     .post-header {
-      margin-bottom: 40px;
+      margin-bottom: 0;
       padding-top: 20px;
-      padding-bottom: 30px;
+      padding-bottom: 25px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      height: auto;
     }
 
     .post-date {
@@ -147,21 +159,32 @@ const { Content } = post;
     }
 
     .post-title .en {
-      margin-bottom: 15px;
+      margin-bottom: 0;
       display: block;
     }
 
     .post-title .cn {
       font-size: 1rem;
-      margin-top: 12px;
-      line-height: 1.6;
-      color: var(--text-muted);
+      margin-top: 1px;
+      margin-bottom: 0;
+      line-height: 1.4;
+      color: #888;
       display: block;
+      clear: both;
+    }
+
+    .post-description {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-top: 20px;
+      margin-bottom: 15px;
+      color: var(--text-muted);
+      font-style: italic;
     }
 
     .post-content {
-      padding-top: 35px;
-      margin-top: 10px;
+      padding: 25px 15px 0;
+      margin: 0;
     }
 
     .post-content :global(p:first-child) {
@@ -169,7 +192,7 @@ const { Content } = post;
     }
 
     .post-content :global(p) {
-      margin-bottom: 1.2em;
+      margin: 0 0 1.2em 0;
       line-height: 1.8;
     }
 

@@ -26,7 +26,7 @@ const showBackButton = !isHomePage;
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content={description}>
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
@@ -156,10 +156,14 @@ const showBackButton = !isHomePage;
       </a>
     </div>
     <nav class="nav-links">
-      {navItems.map(item => (
+      {navItems.map(item => {
+        const isActive = item.id === 'home'
+          ? Astro.url.pathname === '/'
+          : Astro.url.pathname.startsWith(item.url);
+        return (
         <a
           href={item.url}
-          class={`nav-anchor ${item.id === 'home' && Astro.url.pathname === '/' ? 'active' : ''}`}
+          class={`nav-anchor ${isActive ? 'active' : ''}`}
           data-target={item.id}
         >
           <div class="nav-link-item">
@@ -167,7 +171,7 @@ const showBackButton = !isHomePage;
             <span class="cn">{item.cn}</span>
           </div>
         </a>
-      ))}
+      );})}
     </nav>
 
     <!-- Mobile Menu Button -->
@@ -179,16 +183,20 @@ const showBackButton = !isHomePage;
 
   <!-- Mobile Navigation Drawer -->
   <nav class="mobile-nav" id="mobile-nav">
-    {navItems.map(item => (
+    {navItems.map(item => {
+      const isActive = item.id === 'home'
+        ? Astro.url.pathname === '/'
+        : Astro.url.pathname.startsWith(item.url);
+      return (
       <a
         href={item.url}
-        class={`mobile-nav-link ${item.id === 'home' && Astro.url.pathname === '/' ? 'active' : ''}`}
+        class={`mobile-nav-link ${isActive ? 'active' : ''}`}
         onclick="closeMobileMenu()"
       >
         <span class="en">{item.en}</span>
         <span class="cn">{item.cn}</span>
       </a>
-    ))}
+    )})}
   </nav>
   <div class="mobile-nav-overlay" id="mobile-nav-overlay" onclick="closeMobileMenu()"></div>
 

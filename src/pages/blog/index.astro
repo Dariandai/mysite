@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const posts = await Astro.glob('../../content/posts/*.md');
-const sortedPosts = posts
-  .map(post => {
+const allPosts = import.meta.glob('../../content/posts/*.md', { eager: true });
+const sortedPosts = Object.values(allPosts)
+  .map((post: any) => {
     const slug = post.file.split('/').pop().replace('.md', '');
     return {
       slug,
@@ -13,7 +13,7 @@ const sortedPosts = posts
       excerpt: post.frontmatter.description,
     };
   })
-  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 ---
 
 <BaseLayout title="Blog | Dar1an" description="思考与博客文章">
@@ -45,8 +45,7 @@ const sortedPosts = posts
 
 <style>
   .page-content {
-    padding: 100px 10% 50px;
-    padding-left: 140px;
+    padding: 100px 10% 50px 140px;
     min-height: 100vh;
     width: 100%;
     box-sizing: border-box;
