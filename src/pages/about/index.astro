@@ -123,11 +123,13 @@ const timelineEvents = [
       </h2>
       <div class="skills-grid">
         {skills.map(skill => (
-          <div class="skill-card">
-            <h3 class="skill-category">{skill.category}</h3>
-            <ul class="skill-list">
+          <div class="card">
+            <div class="card-header">
+              <span>{skill.category}</span>
+            </div>
+            <ul class="card-list">
               {skill.items.map(item => (
-                <li class="skill-item">{item}</li>
+                <li>{item}</li>
               ))}
             </ul>
           </div>
@@ -286,12 +288,30 @@ const timelineEvents = [
 </BaseLayout>
 
 <style>
+  /* About 页面内容区 - 统一与其他子页面 */
   .about-page {
-    padding: 0;
+    padding: 120px 10% 50px 140px;
     min-height: 100vh;
     width: 100%;
-    max-width: none;
+    max-width: 1400px;
+    margin: 0 auto;
     box-sizing: border-box;
+  }
+
+  @media (max-width: 1024px) {
+    .about-page {
+      padding: 100px 5% 80px 100px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .about-page {
+      padding: 90px 5% 80px;
+    }
+
+    .page-title {
+      font-size: 1.8rem;
+    }
   }
 
   /* GSAP Sections */
@@ -337,16 +357,16 @@ const timelineEvents = [
   }
 
   .page-title {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 300;
     margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    line-height: 1.3;
+    line-height: 1.2;
   }
 
   .page-title .cn {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text-muted);
     margin-top: 8px;
   }

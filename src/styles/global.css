@@ -1,19 +1,160 @@
-/* --- 1. 全局基础设置 --- */
+/* --- 1. 全局基础设置 (v3) --- */
 :root {
     --bg-color: #050505;
-    --card-bg: #111111;
+    --card-bg: #0f0f0f;
+    --card-border: rgba(255,255,255,0.06);
     --text-main: #ffffff;
-    --text-muted: #888888;
+    --text-muted: #666666;
+    --accent: #e8e8e8;
     --nav-height: 80px;
+    /* Typography */
+    --font-display: 'Syne', 'Helvetica Neue', sans-serif;
+    --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
 }
 
-/* 隐藏内部滚动条 - 用于section-scroll-wrapper */
+/* ── 背景颗粒质感 (film grain) ── */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+    opacity: 0.032;
+    z-index: 99998;
+    mix-blend-mode: overlay;
+}
+
+/* ── 分页进度导航点 ── */
+#section-nav-dots {
+    position: fixed;
+    right: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 500;
+    pointer-events: none;
+}
+
+.s-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: auto;
+    cursor: pointer;
+    position: relative;
+}
+
+.s-dot::before {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+}
+
+.s-dot.active {
+    background: rgba(255,255,255,0.9);
+    height: 20px;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+/* ── 移动端侧边进度指示器 ── */
+.mobile-progress-indicator {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 500;
+    pointer-events: none;
+}
+
+.mobile-progress-indicator .m-dots-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+}
+
+.mobile-progress-indicator .m-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    pointer-events: auto;
+    cursor: pointer;
+    position: relative;
+}
+
+.mobile-progress-indicator .m-dot.active {
+    background: rgba(255,255,255,0.9);
+    height: 20px;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+}
+
+/* 触摸区域扩大 */
+.mobile-progress-indicator .m-dot::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+    .mobile-progress-indicator {
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    #section-nav-dots { display: none; }
+}
+
+/* ── 堆叠卡片：内容滚动容器 ── */
 .section-scroll-wrapper {
+    /* JS 会将其设为 position:absolute; inset:0 */
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
 }
 .section-scroll-wrapper::-webkit-scrollbar {
     display: none;
+}
+
+/* 内容区：继承各 section 的 flex 布局和内边距 */
+.section-scroll-content {
+    min-height: 100%;
+    padding: 100px 10% 50px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* 模糊遮罩（被遮盖 section 的暗化效果） */
+.sc-blur-overlay {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(0px);
+    background: rgba(5, 5, 5, 0);
+    pointer-events: none;
+    z-index: 9999;
 }
 
 /* 边界箭头提示 - 位置由 JS 内联样式控制 (right: 20px) */
@@ -46,9 +187,25 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-body);
+    line-height: 1.65;
     height: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use display font */
+h1, h2, h3, h4, h5, h6,
+.section-title,
+.hero-text h1,
+.hero-label,
+.page-title {
+    font-family: var(--font-display);
+}
+
+/* Body text: ensure line-height prevents descender clipping */
+p, li, span:not(.en):not(.cn) {
+    line-height: 1.7;
 }
 
 a {
@@ -74,13 +231,13 @@ img {
 
 .en {
     font-weight: 600;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .cn {
     font-size: 0.85em;
     color: var(--text-muted);
-    font-weight: 300;
+    font-weight: 400;
     margin-top: 2px;
 }
 
@@ -197,24 +354,32 @@ main {
 }
 
 section {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    padding: 100px 10% 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    /* 结构由 JS 控制（position:fixed, transform 等）
+       此处只保留视觉装饰属性作为初始/降级值 */
     background-color: var(--bg-color);
     box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.8);
     border-top: 1px solid #111;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    /* 桌面端大圆角 */
+    border-radius: 120px 120px 0 0;
+    overflow: hidden;
+}
+
+/* 移动端恢复直角 */
+@media (max-width: 768px) {
+    section {
+        border-radius: 0;
+    }
 }
 
 #home {
     z-index: 1;
     box-shadow: none;
     border-top: none;
+    /* #home 占满视口，无圆角 */
+    border-radius: 0;
+    width: 100vw;
+    max-width: 100vw;
+    left: 0;
 }
 
 #about {
@@ -233,22 +398,181 @@ section {
     z-index: 5;
 }
 
-h2.section-title {
-    font-size: 2.5rem;
+/* --- 5. 统一页面标题样式 --- */
+.page-header {
     margin-bottom: 50px;
+}
+
+.page-title {
+    font-size: 2.5rem;
     font-weight: 300;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
     line-height: 1.2;
+}
+
+.page-title .cn {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+    display: block;
+}
+
+/* 子页面通用内容区 - 统一标题位置 */
+.page-content {
+    padding: 120px 10% 50px 140px;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+    .page-content {
+        padding: 100px 5% 80px 100px;
+    }
+}
+
+@media (max-width: 768px) {
+    .page-content {
+        padding: 90px 5% 80px;
+    }
+
+    .page-title {
+        font-size: 1.8rem;
+    }
+}
+
+/* --- 6. 统一卡片基础样式 --- */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 28px;
+    transition: all 0.25s ease;
+}
+
+.card:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+}
+
+.card-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-family: var(--font-mono);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-header i {
+    font-size: 1.2rem;
+}
+
+.card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card-list li {
+    color: var(--text-main);
+    font-size: 0.9rem;
+    padding-left: 16px;
+    position: relative;
+    opacity: 0.85;
+}
+
+.card-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--text-muted);
+    font-size: 1.2em;
+    line-height: 1;
+    top: 2px;
+}
+
+/* 技能网格通用样式 */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+/* 文章/博客卡片通用样式 */
+.posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.post-item {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--card-border);
+    transition: all 0.2s ease;
+}
+
+.post-item:hover {
+    padding-left: 12px;
+}
+
+.post-date {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.post-title {
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.post-title .cn {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+    display: block;
+}
+
+.post-excerpt {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+h2.section-title {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    margin-bottom: 50px;
+    font-weight: 700;
+    line-height: 1.1;
     flex-shrink: 0;
-    padding-top: 20px;
+    padding-top: 10px;
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
 }
 
 h2.section-title span.sub {
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     display: block;
-    margin-bottom: 5px;
-    letter-spacing: 2px;
+    margin-bottom: 12px;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
+    font-family: var(--font-mono);
+    font-weight: 400;
 }
 
 .section-title .text-group {
@@ -269,7 +593,7 @@ h2.section-title span.sub {
 }
 
 /* --- HOME SECTION --- */
-#home {
+#home .section-scroll-content {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -277,42 +601,100 @@ h2.section-title span.sub {
 
 .hero-text {
     flex: 1;
-    padding-right: 50px;
+    padding-right: 60px;
     z-index: 2;
-    animation: fadeIn 1s ease forwards 0.5s;
+    animation: fadeIn 0.9s cubic-bezier(0.4,0,0.2,1) forwards 0.3s;
     opacity: 0;
 }
 
 .hero-text h1 {
-    font-size: 3.5rem;
-    line-height: 1.1;
-    margin-bottom: 20px;
+    font-size: clamp(2.8rem, 5vw, 4.5rem);
+    line-height: 1.0;
+    margin-bottom: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-family: var(--font-display);
+}
+
+/* 角标式装饰线 —— hero 顶部品牌标签 */
+.hero-text .hero-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.hero-text .hero-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--text-muted);
+}
+
+.hero-text .hero-label .en {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* 汉字内联于 h1 —— 细小衬托 */
+.hero-cn-inline {
+    font-size: 0.35em;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    vertical-align: middle;
+    margin-left: 0.4em;
+    font-family: var(--font-body);
 }
 
 .btn-connect {
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    padding: 10px 35px;
-    border: 1px solid var(--text-main);
-    border-radius: 50px;
-    margin-top: 30px;
-    transition: 0.3s;
+    gap: 8px;
+    padding: 12px 28px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px;
+    margin-top: 36px;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
     cursor: pointer;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
 }
 
+.btn-connect::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--text-main);
+    transform: translateX(-101%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+.btn-connect:hover::before { transform: translateX(0); }
+
 .btn-connect .en {
-    font-size: 0.9rem;
-    font-weight: bold;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: var(--font-mono);
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s;
 }
 
 .btn-connect .cn {
     font-size: 0.7rem;
     color: var(--text-muted);
-}
-
-.btn-connect:hover {
-    background: var(--text-main);
+    position: relative;
+    z-index: 1;
+    transition: color 0.3s;
 }
 
 .btn-connect:hover .en {
@@ -320,7 +702,7 @@ h2.section-title span.sub {
 }
 
 .btn-connect:hover .cn {
-    color: #333;
+    color: #444;
 }
 
 .hero-img {
@@ -358,28 +740,47 @@ h2.section-title span.sub {
 /* --- BLOG SECTION --- */
 .blog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    margin-top: 40px;
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .blog-card {
     background: var(--card-bg);
-    padding: 30px;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    transition: 0.3s;
+    padding: 32px 28px;
+    border: none;
+    transition: background 0.25s ease;
+    position: relative;
+}
+
+.blog-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.25s ease;
 }
 
 .blog-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255,255,255,0.03);
+}
+
+.blog-card:hover::after {
+    background: var(--text-main);
 }
 
 .blog-date {
     color: var(--text-muted);
-    font-size: 0.85rem;
-    margin-bottom: 15px;
+    font-size: 0.65rem;
+    margin-bottom: 18px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
 }
 
 /* --- PORTFOLIO SECTION --- */
@@ -443,55 +844,79 @@ h2.section-title span.sub {
 }
 
 .skill-block {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    padding: 35px;
-    transition: all 0.3s ease;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 0;
+    padding: 32px;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.skill-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
 .skill-block:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(255,255,255,0.12);
+}
+
+.skill-block:hover::before {
+    opacity: 1;
 }
 
 .skill-header {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 25px;
+    gap: 12px;
+    margin-bottom: 22px;
 }
 
 .skill-header i {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: var(--text-muted);
 }
 
 .skill-cat {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--text-main);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-family: var(--font-mono);
 }
 
 .skill-items {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
 }
 
 .skill-items li {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    padding-left: 15px;
+    color: var(--text-main);
+    font-size: 0.88rem;
+    padding-left: 16px;
     position: relative;
+    opacity: 0.75;
+    transition: opacity 0.2s;
 }
 
+.skill-block:hover .skill-items li { opacity: 1; }
+
 .skill-items li::before {
-    content: '—';
+    content: '·';
     position: absolute;
     left: 0;
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--text-muted);
+    font-size: 1.2em;
+    line-height: 1;
+    top: 2px;
 }
 
 .skills-cta {
@@ -502,42 +927,38 @@ h2.section-title span.sub {
 /* --- SHARE SECTION --- */
 #share {
     background-color: #080808;
-    min-height: 100vh;
-    height: auto;
 }
 
 #share .section-scroll-content {
-    min-height: 100vh;
-    height: auto;
     padding-bottom: 30px;
 }
 
-.share-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 25px;
+#share .skills-grid {
     margin-top: 30px;
 }
 
-.tool-card {
+/* tool-card now uses .card base styles */
+#share .tool-card {
     display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 25px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    transition: 0.3s;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
 }
 
-.tool-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #fff;
+#share .tool-card .card-list {
+    margin-top: auto;
 }
 
-.tool-icon {
-    font-size: 2rem;
-    color: #fff;
+/* 手机端滑动提示 - 已禁用 */
+.mobile-scroll-hint {
+    display: none !important;
+}
+
+/* 隐藏桌面端的边缘箭头 */
+@media (max-width: 768px) {
+    .edge-arrow {
+        display: none !important;
+    }
 }
 
 footer {
@@ -564,27 +985,39 @@ footer {
 /* --- Mobile Navigation --- */
 .mobile-menu-btn {
     display: none;
-    background: transparent;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--text-main);
-    font-size: 1.8rem;
+    font-size: 1.1rem;
     cursor: pointer;
-    z-index: 1100;
-    padding: 8px;
-    border-radius: 8px;
-    transition: 0.3s;
+    z-index: 3100;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    min-width: 34px;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
 }
 
 .mobile-menu-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
+.mobile-menu-btn i {
+    display: block;
+    line-height: 1;
+    font-size: 1.1rem;
+}
+
+/* 移动端侧边栏 - 优化宽度 */
 .mobile-nav {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 60%;
-    max-width: 280px;
+    width: 65%;
+    max-width: 240px;
     height: 100%;
     min-height: 100vh;
     background: rgba(5, 5, 5, 0.98);
@@ -592,12 +1025,39 @@ footer {
     z-index: 3000;
     display: flex;
     flex-direction: column;
-    padding: 100px 25px 30px;
+    padding: 70px 16px 24px;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+}
+
+/* 移动端侧边栏关闭按钮 */
+.mobile-nav-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    min-width: 34px;
+    min-height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3001;
+}
+
+.mobile-nav-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--text-main);
 }
 
 .mobile-nav.active {
@@ -607,7 +1067,7 @@ footer {
 .mobile-nav-link {
     display: flex;
     flex-direction: column;
-    padding: 15px 0;
+    padding: 12px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     color: var(--text-muted);
     transition: all 0.3s ease;
@@ -627,14 +1087,14 @@ footer {
 .mobile-nav.active .mobile-nav-link:nth-child(5) { transition-delay: 0.40s; }
 
 .mobile-nav-link .en {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .mobile-nav-link .cn {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     margin-top: 2px;
 }
 
@@ -668,7 +1128,7 @@ footer {
 
 /* --- 平板适配 (769px - 1024px) --- */
 @media (min-width: 769px) and (max-width: 1024px) {
-    section {
+    .section-scroll-content {
         padding-left: 5%;
         padding-right: 5%;
     }
@@ -697,17 +1157,8 @@ footer {
         display: none;
     }
 
-    section {
-        padding-left: 5%;
-        padding-right: 5%;
-        padding-top: 90px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        min-height: auto;
-        padding-bottom: 80px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+    .section-scroll-content {
+        padding: 90px 5% 80px;
     }
 
     h2.section-title {
@@ -717,14 +1168,10 @@ footer {
         flex-shrink: 0;
     }
 
-    #home {
+    #home .section-scroll-content {
         flex-direction: column;
-        padding-top: 90px;
-        height: 100vh;
-        min-height: auto;
-        padding-bottom: 80px;
-        position: sticky;
-        top: 0;
+        align-items: flex-start;
+        justify-content: flex-start;
     }
 
     .hero-text {
@@ -799,17 +1246,8 @@ footer {
         --nav-height: 70px;
     }
 
-    section {
-        padding-left: 5%;
-        padding-right: 5%;
-        padding-top: 70px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        min-height: auto;
-        padding-bottom: 80px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+    .section-scroll-content {
+        padding: 70px 5% 80px;
     }
 
     h2.section-title {
@@ -823,15 +1261,10 @@ footer {
         font-size: 0.75rem;
     }
 
-    #home {
+    #home .section-scroll-content {
         flex-direction: column;
-        padding-top: 70px;
-        height: 100vh;
-        min-height: auto;
-        padding-bottom: 80px;
+        align-items: flex-start;
         justify-content: flex-start;
-        position: sticky;
-        top: 0;
     }
 
     .hero-text {
@@ -982,16 +1415,17 @@ footer {
     }
 
     .mobile-nav {
-        width: 80%;
-        padding: 90px 25px 25px;
+        width: 60%;
+        max-width: 220px;
+        padding: 70px 20px 20px;
     }
 
     .mobile-nav-link .en {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .mobile-nav-link .cn {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
 }
 
@@ -1034,17 +1468,8 @@ footer {
         font-size: 0.75rem;
     }
 
-    section {
-        padding-left: 5%;
-        padding-right: 5%;
-        padding-top: 55px;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        min-height: auto;
-        padding-bottom: 15px;
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
+    .section-scroll-content {
+        padding: 55px 5% 15px;
     }
 
     h2.section-title {
@@ -1057,17 +1482,12 @@ footer {
         font-size: 0.7rem;
     }
 
-    /* 修复横屏home布局 - 左右布局，文字和图片各占50% */
-    #home {
+    /* 横屏 home：左右布局，文字图片各占 50% */
+    #home .section-scroll-content {
         flex-direction: row !important;
-        padding: 55px 5% 15px;
-        height: 100vh;
-        min-height: auto;
         justify-content: center;
         align-items: center;
         gap: 4%;
-        position: sticky;
-        top: 0;
     }
 
     .hero-text {

@@ -58,23 +58,18 @@ const skills = [
     <!-- 1. 主页 (Home) -->
     <section id="home">
         <div class="hero-text">
-            <div class="text-group">
-                <p class="en" style="color: var(--text-muted);">WORK IN PROGRESS & DEVELOPER</p>
-                <p class="cn">探索 / 开发</p>
+            <div class="hero-label">
+                <span class="en">WORK IN PROGRESS &amp; DEVELOPER</span>
             </div>
-            <br>
-            <div class="text-group">
-                <h1 class="en">Hello,<br>It's Darian.</h1><h2>代宇</h2>
-            </div>
-            <br>
-            <div class="text-group">
-                <p class="en" style="color: var(--text-muted);">Finding my way and digging deep into how things work.Training for the long game.</p>
-                <p class="cn">探索技术之径，穷理事物之微，修身砺志赴远。</p>
+            <h1 class="en">Hello,<br>I'm Darian<span class="hero-cn-inline">·代宇</span></h1>
+            <div class="text-group" style="margin-top: 20px;">
+                <p class="en" style="color: var(--text-muted); font-size: 1rem; line-height: 1.7; max-width: 420px;">Finding my way and digging deep into how things work. Training for the long game.</p>
+                <p class="cn" style="margin-top: 6px;">探索技术之径，穷理事物之微，修身砺志赴远。</p>
             </div>
 
             <a href="/portfolio/" class="btn-connect">
                 <span class="en">Check Portfolio</span>
-                <span class="cn">查看个人作品</span>
+                <span class="cn">查看作品</span>
             </a>
         </div>
 
@@ -94,14 +89,14 @@ const skills = [
                 </a>
             </div>
         </h2>
-        <div class="skills-showcase">
+        <div class="skills-grid">
             {skills.map(skill => (
-                <div class="skill-block">
-                    <div class="skill-header">
+                <div class="card">
+                    <div class="card-header">
                         <i class={skill.icon}></i>
-                        <h3 class="skill-cat">{skill.category}</h3>
+                        <span>{skill.category}</span>
                     </div>
-                    <ul class="skill-items">
+                    <ul class="card-list">
                         {skill.items.map(item => (
                             <li>{item}</li>
                         ))}
@@ -128,15 +123,18 @@ const skills = [
                 </a>
             </div>
         </h2>
-        <div class="blog-grid">
+        <div class="skills-grid">
             {blogPosts.map(post => (
-                <a href={post.url} class="blog-card">
-                    <div class="blog-date">{post.date}</div>
-                    <div class="text-group">
-                        <h3 class="en">{post.titleEn}</h3>
-                        <h3 class="cn">{post.titleCn}</h3>
-                        <p class="cn" style="margin-top:10px;">{post.excerpt}</p>
+                <a href={post.url} class="card blog-card">
+                    <div class="card-header">
+                        <i class="ri-article-line"></i>
+                        <span>{post.date}</span>
                     </div>
+                    <div class="text-group">
+                        <span class="en" style="font-weight: 500; font-size: 1.1rem;">{post.titleEn}</span>
+                        <span class="cn" style="margin-top: 6px;">{post.titleCn}</span>
+                    </div>
+                    <p class="cn" style="margin-top: 12px; font-size: 0.9rem;">{post.excerpt}</p>
                 </a>
             ))}
         </div>
@@ -178,14 +176,16 @@ const skills = [
             </div>
         </h2>
 
-        <div class="share-grid">
+        <div class="skills-grid">
             {tools.map(tool => (
-                <a href="/share/" class="tool-card">
-                    <div class="tool-icon"><i class={tool.icon}></i></div>
-                    <div class="text-group">
-                        <span class="en" style="font-weight:bold;">{tool.name}</span>
-                        <span class="cn">{tool.desc}</span>
+                <a href="/share/" class="card tool-card">
+                    <div class="card-header">
+                        <i class={tool.icon}></i>
+                        <span>{tool.name}</span>
                     </div>
+                    <ul class="card-list">
+                        <li>{tool.desc}</li>
+                    </ul>
                 </a>
             ))}
         </div>

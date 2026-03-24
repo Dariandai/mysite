@@ -30,13 +30,35 @@ const showBackButton = !isHomePage;
   <meta name="description" content={description}>
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
-  <!-- GSAP for smooth scroll animations -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" is:inline></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" is:inline></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" is:inline></script>
+  <!-- Performance: Preconnect to critical domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <!-- DNS Prefetch for other resources -->
+  <link rel="dns-prefetch" href="https://img.dar1an.dpdns.org">
+  <!-- Preload critical hero image for homepage -->
+  {isHomePage && <link rel="preload" as="image" href="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" type="image/png" fetchpriority="high">}
+  <!-- Critical CSS inline for above-fold content -->
+  <style>
+    /* Critical font loading - prevent FOIT */
+    @font-face {
+      font-family: 'Syne';
+      font-display: swap;
+      src: local('Syne');
+    }
+  </style>
+  <!-- Typography: Syne (display/headings) + DM Sans (body) + Space Mono (labels) -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Remix Icon with preload -->
+  <link rel="preload" href="https://unpkg.com/remixicon@3.7.0/fonts/remixicon.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="https://unpkg.com/remixicon@3.7.0/fonts/remixicon.css">
+  <!-- GSAP for smooth scroll animations - async load -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" defer></script>
   <style is:global>
-    @import '../styles/global.css';
+    @import '../styles/global.css'; /* v3 */
   </style>
   <style>
     /* Back Button Fixed Position */
@@ -183,6 +205,9 @@ const showBackButton = !isHomePage;
 
   <!-- Mobile Navigation Drawer -->
   <nav class="mobile-nav" id="mobile-nav">
+    <button class="mobile-nav-close" aria-label="Close menu" onclick="closeMobileMenu()">
+      <i class="ri-close-line"></i>
+    </button>
     {navItems.map(item => {
       const isActive = item.id === 'home'
         ? Astro.url.pathname === '/'
@@ -210,6 +235,14 @@ const showBackButton = !isHomePage;
       </span>
     </button>
   )}
+
+  <!-- Section Progress Indicator (populated by stacking-cards.js) -->
+  <div id="section-nav-dots" aria-hidden="true"></div>
+
+  <!-- Mobile Progress Indicator (populated by stacking-cards.js) -->
+  <div class="mobile-progress-indicator" id="mobile-progress" aria-hidden="true">
+    <div class="m-dots-container" id="mobile-dots"></div>
+  </div>
 
   <!-- Main Content -->
   <main>

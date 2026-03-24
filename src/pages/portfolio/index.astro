@@ -32,7 +32,7 @@ const projects = [
       {projects.map(project => (
         <a href={`/portfolio/${project.slug}/`} class="project-card">
           <div class="project-image">
-            <img src={project.image} alt={project.titleEn} />
+            <img src={project.image} alt={project.titleEn} loading="lazy" decoding="async" />
           </div>
           <div class="project-info">
             <span class="project-category">{project.category}</span>
@@ -49,38 +49,9 @@ const projects = [
 </BaseLayout>
 
 <style>
-  .page-content {
-    padding: 100px 10% 50px 140px;
-    min-height: 100vh;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .page-header {
-    margin-bottom: 60px;
-  }
-
-  .page-title {
-    font-size: 3rem;
-    font-weight: 300;
-    margin-bottom: 15px;
-  }
-
-  .page-title .cn {
-    font-size: 1.2rem;
-    color: var(--text-muted);
-    margin-top: 10px;
-    display: block;
-  }
-
-  .page-desc {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-  }
-
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
     gap: 30px;
   }
 
@@ -98,7 +69,7 @@ const projects = [
   }
 
   .project-image {
-    height: 250px;
+    height: 220px;
     overflow: hidden;
   }
 
@@ -114,41 +85,42 @@ const projects = [
   }
 
   .project-info {
-    padding: 25px;
+    padding: 24px;
   }
 
   .project-category {
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-family: var(--font-mono);
   }
 
   .project-title {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .project-title .en {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 500;
+    display: block;
   }
 
   .project-title .cn {
     font-size: 0.9rem;
-    margin-top: 5px;
+    margin-top: 4px;
+    color: var(--text-muted);
+    display: block;
   }
 
   @media (max-width: 768px) {
-    .page-content {
-      padding: 100px 5% 80px;
-    }
-
-    .page-title {
-      font-size: 2rem;
-    }
-
     .projects-grid {
       grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .project-image {
+      height: 180px;
     }
   }
 </style>
