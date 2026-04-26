@@ -2,7 +2,7 @@
 // 此中间件会在所有请求上执行，包括静态资源
 
 export async function onRequest(context) {
-  const { request, env, next } = context;
+  const { request, next } = context;
 
   // 只抓取页面请求（排除静态资源）
   const url = new URL(request.url);

@@ -112,7 +112,14 @@ export class StackingCards {
     window.removeEventListener('touchend', this._boundTouchEnd);
     window.removeEventListener('keydown', this._boundKey);
     window.removeEventListener('resize', this._boundResize);
+    window.visualViewport?.removeEventListener('resize', this._boundResize);
     window.removeEventListener('orientationchange', this._boundOrientation);
+
+    // Restore scroll lock styles
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.height = '';
+    document.body.style.overflow = '';
+    document.body.style.height = '';
   }
 
   // ─── 初始化 ────────────────────────────────────────────────────────────────
@@ -124,12 +131,17 @@ export class StackingCards {
     document.body.style.overflow = 'hidden';
     document.body.style.height   = '100%';
 
+    // iOS Safari / mobile address bar: keep a stable viewport-height unit
+    this._setViewportUnit();
+
     this.sections.forEach((section, i) => {
       // 固定定位全屏卡片 - 注意：圆角由 CSS 控制，不在此处设置
       section.style.cssText = `
         position: fixed !important;
         top: 0; left: 0;
-        width: 100%; height: 100%;
+        width: 100%;
+        height: calc(var(--vvh, 1vh) * 100);
+        height: 100dvh;
         overflow: hidden;
         z-index: ${i + 1};
         background-color: var(--bg-color, #050505);
@@ -139,19 +151,29 @@ export class StackingCards {
 
       // 创建内容滚动容器（仅首次）
       if (!section.querySelector('.section-scroll-wrapper')) {
-        const children = Array.from(section.childNodes).filter(
-          n => n.nodeType === Node.ELEMENT_NODE
-        );
-
         const wrapper = document.createElement('div');
         wrapper.className = 'section-scroll-wrapper';
 
-        const content = document.createElement('div');
-        content.className = 'section-scroll-content';
+        // If markup already provides a .section-scroll-content (project pages),
+        // reuse it to avoid nested scroll containers.
+        const existingContent = Array.from(section.children).find((el) =>
+          el.classList.contains('section-scroll-content')
+        );
+        if (existingContent) {
+          wrapper.appendChild(existingContent);
+          section.appendChild(wrapper);
+        } else {
+          const children = Array.from(section.childNodes).filter(
+            n => n.nodeType === Node.ELEMENT_NODE
+          );
 
-        children.forEach(child => content.appendChild(child));
-        wrapper.appendChild(content);
-        section.appendChild(wrapper);
+          const content = document.createElement('div');
+          content.className = 'section-scroll-content';
+
+          children.forEach(child => content.appendChild(child));
+          wrapper.appendChild(content);
+          section.appendChild(wrapper);
+        }
       }
 
       // 模糊遮罩（用于"被压在下面"的 section）
@@ -160,6 +182,7 @@ export class StackingCards {
         blur.className = 'sc-blur-overlay';
         section.appendChild(blur);
       }
+
     });
   }
 
@@ -171,8 +194,11 @@ export class StackingCards {
 
     container.innerHTML = '';
     this.sections.forEach((_, i) => {
-      const dot = document.createElement('div');
+      const dot = document.createElement('button');
+      dot.type = 'button';
       dot.className = 's-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to section ${i + 1}`);
+      dot.setAttribute('aria-current', i === 0 ? 'true' : 'false');
       dot.addEventListener('click', () => this.goTo(i));
       container.appendChild(dot);
     });
@@ -187,8 +213,11 @@ export class StackingCards {
 
     mobileContainer.innerHTML = '';
     this.sections.forEach((_, i) => {
-      const dot = document.createElement('div');
+      const dot = document.createElement('button');
+      dot.type = 'button';
       dot.className = 'm-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `Go to section ${i + 1}`);
+      dot.setAttribute('aria-current', i === 0 ? 'true' : 'false');
       dot.addEventListener('click', () => this.goTo(i));
       mobileContainer.appendChild(dot);
     });
@@ -201,6 +230,9 @@ export class StackingCards {
     const dots = document.querySelectorAll('.s-dot');
     dots.forEach((dot, i) => {
       dot.classList.toggle('active', i === this.currentIndex);
+      if (dot instanceof HTMLElement) {
+        dot.setAttribute('aria-current', i === this.currentIndex ? 'true' : 'false');
+      }
     });
 
     // 同时更新移动端进度
@@ -212,6 +244,9 @@ export class StackingCards {
 
     mobileDots.forEach((dot, i) => {
       dot.classList.toggle('active', i === this.currentIndex);
+      if (dot instanceof HTMLElement) {
+        dot.setAttribute('aria-current', i === this.currentIndex ? 'true' : 'false');
+      }
     });
   }
 
@@ -282,12 +317,16 @@ export class StackingCards {
     window.addEventListener('touchend',   this._boundTouchEnd,   { passive: true });
     window.addEventListener('keydown',       this._boundKey);
     window.addEventListener('resize',        this._boundResize);
+    window.visualViewport?.addEventListener('resize', this._boundResize);
     window.addEventListener('orientationchange', this._boundOrientation);
+
   }
 
   // ─── 事件处理 ──────────────────────────────────────────────────────────────
 
   _onWheel(e) {
+    // Do not hijack pinch-zoom / system gesture combos.
+    if (e.ctrlKey || e.metaKey) return;
     // 阻止默认（body overflow:hidden 已防止滚动，这里是防止 Firefox 等边缘情况）
     e.preventDefault();
     if (this.isTransitioning) return;
@@ -407,14 +446,21 @@ export class StackingCards {
   }
 
   _onResize() {
-    // fixed 定位不需要重算位置，CSS height:100% 自动适配 viewport
-    // 只需确保每个 section 的 translateY 状态正确
+    this._setViewportUnit();
+    // Keep sections pinned correctly after viewport changes (mobile address bar / rotation)
     this.sections.forEach((section, i) => {
       const y = i < this.currentIndex ? '-100%'
               : i === this.currentIndex ? '0%'
               : '100%';
       gsap.set(section, { translateY: y });
     });
+  }
+
+  _setViewportUnit() {
+    if (typeof window === 'undefined') return;
+    const h = window.visualViewport?.height || window.innerHeight;
+    const vvh = h * 0.01;
+    document.documentElement.style.setProperty('--vvh', `${vvh}px`);
   }
 
   // ─── 核心导航 ──────────────────────────────────────────────────────────────
@@ -444,6 +490,10 @@ export class StackingCards {
         if (dir > 0) {
           const w = this._getWrapper(targetIndex);
           if (w) w.scrollTop = 0;
+        }
+
+        if (this.options.onSectionChange) {
+          this.options.onSectionChange(targetIndex, this.sections[targetIndex]);
         }
       }
     });
@@ -484,9 +534,6 @@ export class StackingCards {
     this._updateProgressDots();
     tl.call(() => this._animateContentIn(targetIndex));
 
-    if (this.options.onSectionChange) {
-      this.options.onSectionChange(targetIndex, this.sections[targetIndex]);
-    }
   }
 
   // ─── 内部工具方法 ──────────────────────────────────────────────────────────

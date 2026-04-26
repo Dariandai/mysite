@@ -3,130 +3,146 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="System UI | Dar1an" description="后台数据可视化界面">
-  <div class="page-content project-page" data-stacking-cards>
-    <!-- 项目概览 -->
-    <section class="project-section" id="overview">
-      <header class="project-header">
-        <span class="project-category">Dashboard / Data Viz</span>
-        <h1 class="project-title">
-          <span class="en">System UI</span>
-          <span class="cn">后台数据可视化界面</span>
-        </h1>
-      </header>
-      <div class="project-image-full">
-        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop" alt="System UI Dashboard" />
-      </div>
-      <div class="project-intro">
-        <p>一个现代化的后台数据可视化仪表盘系统，专注于简洁直观的用户体验设计。通过清晰的视觉层次和流畅的交互动画，帮助用户快速理解复杂数据，做出明智决策。</p>
-        <div class="tech-tags">
-          <span>Figma</span>
-          <span>React</span>
-          <span>Tailwind CSS</span>
-          <span>Recharts</span>
-          <span>Framer Motion</span>
+  <div class="project-page-unified">
+    <!-- 1. 项目概览 -->
+    <section id="overview" class="project-section" aria-label="Project overview">
+      <div class="section-scroll-content">
+        <header class="project-header-unified">
+          <span class="project-category">Dashboard / Data Viz</span>
+          <h1 class="project-title">
+            <span class="en">System UI</span>
+            <span class="cn">后台数据可视化界面</span>
+          </h1>
+        </header>
+        <div class="project-image-unified">
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop"
+            alt="System UI dashboard preview"
+            decoding="async"
+            width="1200"
+            height="630"
+          />
         </div>
-      </div>
-    </section>
-
-    <!-- 核心功能 -->
-    <section class="project-section" id="features">
-      <h2 class="section-title">核心功能</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <h3>实时数据监控</h3>
-          <p>动态更新的图表和指标卡片，支持实时数据流展示，关键指标一目了然</p>
-        </div>
-        <div class="feature-card">
-          <h3>响应式布局</h3>
-          <p>自适应各种屏幕尺寸，从大屏展示到移动端查看都能完美呈现</p>
-        </div>
-        <div class="feature-card">
-          <h3>暗黑模式</h3>
-          <p>精心调校的深色主题，降低长时间查看的视觉疲劳，提升数据可读性</p>
-        </div>
-        <div class="feature-card">
-          <h3>交互式图表</h3>
-          <p>支持缩放、筛选、下钻等交互操作，深入探索数据细节</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 设计系统 -->
-    <section class="project-section" id="design-system">
-      <h2 class="section-title">设计系统</h2>
-      <div class="arch-content">
-        <div class="arch-item">
-          <h3>色彩体系</h3>
-          <p>以深色为基底，使用高对比度的数据色区分不同维度的信息，确保数据可视化清晰易读</p>
-        </div>
-        <div class="arch-item">
-          <h3>字体规范</h3>
-          <p>Inter 字体家族为主，数字使用等宽字体，保证数据对齐和可读性</p>
-        </div>
-        <div class="arch-item">
-          <h3>组件库</h3>
-          <p>统一的卡片、按钮、表单、表格组件，保持界面一致性，提升开发效率</p>
-        </div>
-        <div class="arch-item">
-          <h3>间距系统</h3>
-          <p>8px 为基础的间距网格，确保视觉节奏感和布局整洁</p>
-        </div>
-      </div>
-
-      <div class="rag-section">
-        <h3>设计原则</h3>
-        <ol class="rag-steps">
-          <li><strong>清晰优先：</strong>数据可视化以清晰传达信息为首要目标，避免过度装饰干扰数据本身</li>
-          <li><strong>层次分明：</strong>通过颜色、大小、间距建立清晰的视觉层级，引导用户关注重点</li>
-          <li><strong>即时反馈：</strong>所有交互操作都有即时的视觉反馈，让用户感知系统状态</li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- 技术实现 -->
-    <section class="project-section" id="tech">
-      <div class="perf-challenges">
-        <div class="perf-col">
-          <h2 class="section-title">技术栈</h2>
-          <ul class="perf-list">
-            <li>React 18 + TypeScript 类型安全</li>
-            <li>Tailwind CSS 原子化样式</li>
-            <li>Recharts 数据可视化图表库</li>
-            <li>Framer Motion 流畅动画</li>
-            <li>Vite 快速构建工具</li>
-          </ul>
-        </div>
-        <div class="challenges-col">
-          <h2 class="section-title">技术亮点</h2>
-          <div class="challenge-item">
-            <h4>性能优化</h4>
-            <p>使用 React.memo 和 useMemo 优化大数据量渲染，图表虚拟滚动处理万级数据点</p>
-          </div>
-          <div class="challenge-item">
-            <h4>主题切换</h4>
-            <p>CSS 变量实现无缝暗黑/亮色模式切换，支持系统主题自动适配</p>
+        <div class="project-intro-unified">
+          <p>一个现代化的后台数据可视化仪表盘系统，专注于简洁直观的用户体验设计。通过清晰的视觉层次和流畅的交互动画，帮助用户快速理解复杂数据，做出明智决策。</p>
+          <div class="tech-tags-unified">
+            <span>Figma</span>
+            <span>React</span>
+            <span>Tailwind CSS</span>
+            <span>Recharts</span>
+            <span>Framer Motion</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 后续计划 -->
-    <section class="project-section" id="future">
-      <div class="future-section">
-        <div class="future-plans">
-          <h2 class="section-title">后续计划</h2>
-          <ul>
-            <li>数据导出：支持 PDF、Excel、PNG 等多种格式导出</li>
-            <li>自定义仪表盘：用户可拖拽配置个性化视图</li>
-            <li>多数据源：接入更多类型的数据库和 API</li>
-            <li>移动端 App：基于 React Native 的移动端版本</li>
-          </ul>
+    <!-- 2. 核心功能 -->
+    <section id="features" class="project-section" aria-label="Features">
+      <div class="section-scroll-content">
+        <h2 class="section-title-unified">核心功能</h2>
+        <div class="content-cards-grid two-cols">
+          <div class="info-card">
+            <h3>实时数据监控</h3>
+            <p>动态更新的图表和指标卡片，支持实时数据流展示，关键指标一目了然</p>
+          </div>
+          <div class="info-card">
+            <h3>响应式布局</h3>
+            <p>自适应各种屏幕尺寸，从大屏展示到移动端查看都能完美呈现</p>
+          </div>
+          <div class="info-card">
+            <h3>暗黑模式</h3>
+            <p>精心调校的深色主题，降低长时间查看的视觉疲劳，提升数据可读性</p>
+          </div>
+          <div class="info-card">
+            <h3>交互式图表</h3>
+            <p>支持缩放、筛选、下钻等交互操作，深入探索数据细节</p>
+          </div>
         </div>
-        <div class="github-link">
-          <a href="https://github.com/Dry-U" target="_blank" class="btn-primary">
-            <i class="ri-github-fill"></i>
-            <span>View on GitHub</span>
-          </a>
+      </div>
+    </section>
+
+    <!-- 3. 设计系统 -->
+    <section id="design-system" class="project-section" aria-label="Design system">
+      <div class="section-scroll-content">
+        <h2 class="section-title-unified">设计系统</h2>
+        <div class="content-cards-grid two-cols">
+          <div class="info-card">
+            <h3>色彩体系</h3>
+            <p>以深色为基底，使用高对比度的数据色区分不同维度的信息，确保数据可视化清晰易读</p>
+          </div>
+          <div class="info-card">
+            <h3>字体规范</h3>
+            <p>Inter 字体家族为主，数字使用等宽字体，保证数据对齐和可读性</p>
+          </div>
+          <div class="info-card">
+            <h3>组件库</h3>
+            <p>统一的卡片、按钮、表单、表格组件，保持界面一致性，提升开发效率</p>
+          </div>
+          <div class="info-card">
+            <h3>间距系统</h3>
+            <p>8px 为基础的间距网格，确保视觉节奏感和布局整洁</p>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h3>设计原则</h3>
+          <ol class="numbered-list">
+            <li><strong>清晰优先：</strong>数据可视化以清晰传达信息为首要目标，避免过度装饰干扰数据本身</li>
+            <li><strong>层次分明：</strong>通过颜色、大小、间距建立清晰的视觉层级，引导用户关注重点</li>
+            <li><strong>即时反馈：</strong>所有交互操作都有即时的视觉反馈，让用户感知系统状态</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 技术实现 -->
+    <section id="tech" class="project-section" aria-label="Implementation details">
+      <div class="section-scroll-content">
+        <div class="two-col-layout">
+          <div class="col">
+            <h2 class="section-title-unified">技术栈</h2>
+            <ul class="feature-list-unified">
+              <li>React 18 + TypeScript 类型安全</li>
+              <li>Tailwind CSS 原子化样式</li>
+              <li>Recharts 数据可视化图表库</li>
+              <li>Framer Motion 流畅动画</li>
+              <li>Vite 快速构建工具</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h2 class="section-title-unified">技术亮点</h2>
+            <div class="info-card" style="margin-bottom: 16px;">
+              <h4>性能优化</h4>
+              <p>使用 React.memo 和 useMemo 优化大数据量渲染，图表虚拟滚动处理万级数据点</p>
+            </div>
+            <div class="info-card">
+              <h4>主题切换</h4>
+              <p>CSS 变量实现无缝暗黑/亮色模式切换，支持系统主题自动适配</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 后续计划 -->
+    <section id="future" class="project-section" aria-label="Future plans">
+      <div class="section-scroll-content">
+        <div class="two-col-layout col-wide">
+          <div class="col">
+            <h2 class="section-title-unified">后续计划</h2>
+            <ul class="arrow-list">
+              <li>数据导出：支持 PDF、Excel、PNG 等多种格式导出</li>
+              <li>自定义仪表盘：用户可拖拽配置个性化视图</li>
+              <li>多数据源：接入更多类型的数据库和 API</li>
+              <li>移动端 App：基于 React Native 的移动端版本</li>
+            </ul>
+          </div>
+          <div class="col" style="display: flex; align-items: center; justify-content: center;">
+            <a href="https://github.com/Dry-U" target="_blank" rel="noopener noreferrer" class="btn-primary-unified">
+              <i class="ri-github-fill"></i>
+              <span>View on GitHub</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -134,371 +150,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  // 使用统一的堆叠卡片模块
-  import { initStackingCards } from '/src/scripts/stacking-cards.js';
+  import { initStackingCards } from '../../scripts/stacking-cards.js';
 
   initStackingCards({
-    sections: '.project-page section',
+    sections: '.project-section',
     sectionOrder: ['overview', 'features', 'design-system', 'tech', 'future']
   });
 </script>
-
-<style>
-  .project-page {
-    padding: 0;
-    min-height: 100vh;
-    width: 100%;
-    max-width: none;
-    box-sizing: border-box;
-  }
-
-  .project-page section {
-    position: relative;
-    min-height: 100vh;
-    height: 100vh;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    background-color: var(--bg-color, #050505);
-    box-shadow: 0 -15px 30px rgba(0, 0, 0, 0.8);
-    border-top: 1px solid #111;
-    overflow: hidden;
-  }
-
-  .project-page .section-scroll-content {
-    padding: 100px 10% 50px 140px;
-    max-width: none;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 100vh;
-  }
-
-  #overview { z-index: 1; box-shadow: none; border-top: none; }
-  #features { z-index: 2; }
-  #design-system { z-index: 3; }
-  #tech { z-index: 4; }
-  #future { z-index: 5; }
-
-  .project-header {
-    margin-bottom: 30px;
-  }
-
-  .project-category {
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  .project-title {
-    font-size: 2.2rem;
-    font-weight: 300;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.3;
-  }
-
-  .project-title .cn {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-    margin-top: 8px;
-  }
-
-  .project-image-full {
-    margin-bottom: 30px;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  .project-image-full img {
-    width: 100%;
-    height: auto;
-    max-height: 300px;
-    object-fit: cover;
-    display: block;
-  }
-
-  .project-intro p {
-    color: var(--text-muted);
-    line-height: 1.8;
-    margin-bottom: 20px;
-  }
-
-  .tech-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .tech-tags span {
-    padding: 6px 14px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  .section-title {
-    font-size: 1.8rem;
-    font-weight: 300;
-    margin-bottom: 30px;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .feature-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px;
-    padding: 25px;
-    transition: all 0.3s ease;
-  }
-
-  .feature-card:hover {
-    background: rgba(255,255,255,0.06);
-    border-color: rgba(255,255,255,0.15);
-    transform: translateY(-3px);
-  }
-
-  .feature-card h3 {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 10px;
-    color: var(--text-main);
-  }
-
-  .feature-card p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  .arch-content {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-
-  .arch-item h3 {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-main);
-  }
-
-  .arch-item p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  .rag-section {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 12px;
-    padding: 25px;
-  }
-
-  .rag-section h3 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 15px;
-  }
-
-  .rag-steps {
-    list-style: none;
-    counter-reset: rag-counter;
-  }
-
-  .rag-steps li {
-    position: relative;
-    padding-left: 30px;
-    margin-bottom: 15px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    font-size: 0.9rem;
-  }
-
-  .rag-steps li::before {
-    counter-increment: rag-counter;
-    content: counter(rag-counter);
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 20px;
-    height: 20px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .perf-challenges {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 40px;
-  }
-
-  .perf-list {
-    list-style: none;
-  }
-
-  .perf-list li {
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    color: var(--text-muted);
-    font-size: 0.95rem;
-  }
-
-  .perf-list li:last-child {
-    border-bottom: none;
-  }
-
-  .challenge-item {
-    margin-bottom: 20px;
-  }
-
-  .challenge-item h4 {
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-main);
-  }
-
-  .challenge-item p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  .future-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .future-plans ul {
-    list-style: none;
-  }
-
-  .future-plans li {
-    position: relative;
-    padding-left: 20px;
-    margin-bottom: 15px;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
-
-  .future-plans li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--text-muted);
-  }
-
-  .github-link {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 15px 30px;
-    background: var(--text-main);
-    color: var(--bg-color);
-    border-radius: 50px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(255,255,255,0.1);
-  }
-
-  .btn-primary i {
-    font-size: 1.3rem;
-  }
-
-  @media (max-width: 768px) {
-    .project-page section {
-      padding: 0;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .project-page .section-scroll-content {
-      padding: 80px 5% 60px;
-      justify-content: flex-start;
-    }
-
-    .project-header {
-      margin-bottom: 20px;
-      margin-top: 0;
-    }
-
-    .project-category {
-      font-size: 0.75rem;
-      margin-bottom: 8px;
-    }
-
-    .project-title {
-      font-size: 1.5rem;
-      line-height: 1.3;
-    }
-
-    .project-title .cn {
-      font-size: 1rem;
-      margin-top: 6px;
-    }
-
-    .project-image-full {
-      margin-bottom: 20px;
-    }
-
-    .project-image-full img {
-      max-height: 200px;
-    }
-
-    .features-grid,
-    .arch-content {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .perf-challenges,
-    .future-section {
-      grid-template-columns: 1fr;
-      gap: 25px;
-    }
-
-    .feature-card,
-    .rag-section {
-      padding: 18px;
-    }
-
-    .section-title {
-      font-size: 1.4rem;
-      margin-bottom: 20px;
-    }
-  }
-</style>

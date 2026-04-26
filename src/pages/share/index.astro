@@ -1,63 +1,111 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const tools = [
-  { name: 'Figma', desc: '界面协作设计', icon: 'ri-pencil-ruler-2-fill', url: 'https://figma.com' },
-  { name: 'Dribbble', desc: '设计师灵感社区', icon: 'ri-dribbble-line', url: 'https://dribbble.com' },
-  { name: 'GitHub', desc: '开源代码托管', icon: 'ri-github-fill', url: 'https://github.com' },
-  { name: 'Vercel', desc: '前端部署托管', icon: 'ri-cloud-windy-fill', url: 'https://vercel.com' },
-  { name: 'Notion', desc: '笔记知识管理', icon: 'ri-sticky-note-line', url: 'https://notion.so' },
-  { name: 'Raycast', desc: 'Mac 启动器', icon: 'ri-command-line', url: 'https://raycast.com' }
+const toolCategories = [
+  {
+    slug: 'design',
+    name: 'Design',
+    nameCn: '设计工具',
+    tools: [
+      { name: 'Figma', desc: '界面协作设计', detail: '最强大的界面协作设计工具。实时多人协作、组件库管理、自动布局，让团队设计效率翻倍。', icon: 'ri-pencil-ruler-2-fill', url: 'https://figma.com' },
+      { name: 'Dribbble', desc: '设计师灵感社区', detail: '寻找顶级设计师的灵感社区。高质量 UI/UX 作品展示，是设计师获取灵感的不二之选。', icon: 'ri-dribbble-line', url: 'https://dribbble.com' }
+    ]
+  },
+  {
+    slug: 'development',
+    name: 'Development',
+    nameCn: '开发工具',
+    tools: [
+      { name: 'GitHub', desc: '开源代码托管', detail: '全球最大的开源代码托管平台。版本控制、代码审查、CI/CD，开发者的必备工具。', icon: 'ri-github-fill', url: 'https://github.com' },
+      { name: 'Vercel', desc: '前端部署托管', detail: '极速的前端部署与托管平台。零配置部署、边缘网络、自动 HTTPS，让上线变得简单。', icon: 'ri-cloud-windy-fill', url: 'https://vercel.com' },
+      { name: 'Raycast', desc: 'Mac 启动器', detail: 'Mac 效率神器。可编程的启动器，支持剪贴板历史、窗口管理、AI 集成等功能。', icon: 'ri-command-line', url: 'https://raycast.com' }
+    ]
+  },
+  {
+    slug: 'productivity',
+    name: 'Productivity',
+    nameCn: '效率工具',
+    tools: [
+      { name: 'Notion', desc: '笔记知识管理', detail: '笔记与知识管理。灵活的数据库、团队协作、AI 助手，打造你的第二大脑。', icon: 'ri-sticky-note-line', url: 'https://notion.so' }
+    ]
+  }
 ];
 ---
 
 <BaseLayout title="Share | Dar1an" description="好用的工具与资源推荐">
-  <div class="page-content">
-    <header class="page-header">
-      <h1 class="page-title">
-        <span class="en">Tools & Resources</span>
-        <span class="cn">工具与资源</span>
-      </h1>
-    </header>
-
-    <div class="tools-grid">
-      {tools.map(tool => (
-        <a href={tool.url} target="_blank" class="card tool-card">
-          <div class="card-header">
-            <i class={tool.icon}></i>
-            <span>{tool.name}</span>
+  {toolCategories.map((category, catIndex) => (
+    <section id={`share-${category.slug}`} class="stacked-page-section" aria-label={`${category.name} tools`}>
+      <div class="stacked-page-shell">
+        {catIndex === 0 && (
+          <header class="page-header" data-animate="fade-up">
+            <h1 class="page-title">
+              <span class="en">Share</span>
+              <span class="cn">分享</span>
+            </h1>
+          </header>
+        )}
+        <h2 class="section-title">
+          <span class="sub">{category.name} / {category.nameCn}</span>
+          <div class="text-group">
+            <span class="en">Curated Tools</span>
+            <span class="cn section-title-cn">实用工具推荐</span>
           </div>
-          <ul class="card-list">
-            <li>{tool.desc}</li>
-          </ul>
-        </a>
-      ))}
-    </div>
-  </div>
+        </h2>
+
+        <div class="content-grid tools-grid-home" role="list">
+          {category.tools.map((tool) => (
+            <a
+              href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="unified-card tool-card"
+              role="listitem"
+            >
+              <div class="tool-icon-wrapper">
+                <i class={tool.icon}></i>
+              </div>
+              <div class="tool-content">
+                <span class="tool-name">{tool.name}</span>
+                <span class="tool-desc">{tool.desc}</span>
+                <span class="tool-detail">{tool.detail}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {catIndex === toolCategories.length - 1 && (
+          <footer>
+            <div class="text-group">
+              <span class="en">More recommendations coming soon.</span>
+              <span class="cn">持续更新中，欢迎交流推荐。</span>
+            </div>
+          </footer>
+        )}
+      </div>
+    </section>
+  ))}
 </BaseLayout>
 
+<script>
+  import { initStackingCards } from '../../scripts/stacking-cards.js';
+
+  initStackingCards({
+    sections: 'section',
+    sectionOrder: ['share-design', 'share-development', 'share-productivity']
+  });
+</script>
+
 <style>
-  .tools-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 24px;
-  }
-
-  .tool-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    text-decoration: none;
-  }
-
-  .tool-card .card-list {
-    margin-top: auto;
+  .tool-detail {
+    font-size: var(--type-body-tight);
+    color: var(--text-muted);
+    line-height: 1.55;
+    opacity: 0.75;
   }
 
   @media (max-width: 768px) {
-    .tools-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
+    .tool-detail {
+      display: none;
     }
   }
 </style>

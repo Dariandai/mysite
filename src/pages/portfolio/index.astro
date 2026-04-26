@@ -7,21 +7,27 @@ const projects = [
     titleEn: 'File Tools',
     titleCn: '本地文件智能检索与问答',
     category: 'Python / RAG',
-    image: 'https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png'
+    image: 'https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png',
+    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    description: '基于 RAG 技术实现的本地文件智能检索与问答系统，支持多种文档格式。',
+    techStack: ['Python', 'PyTorch', 'LangChain', 'FastAPI']
   },
   {
     slug: 'system-ui',
     titleEn: 'System UI',
     titleCn: '后台数据可视化界面',
     category: 'Dashboard',
-    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop'
+    image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop',
+    gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    description: '使用 Vue3 + ECharts 构建的企业级数据可视化大屏系统。',
+    techStack: ['Vue3', 'ECharts', 'Element Plus', 'TypeScript']
   }
 ];
 ---
 
 <BaseLayout title="Portfolio | Dar1an" description="精选项目作品集">
-  <div class="page-content">
-    <header class="page-header">
+  <div class="sub-page">
+    <header class="page-header" data-animate="fade-up">
       <h1 class="page-title">
         <span class="en">Portfolio</span>
         <span class="cn">作品集</span>
@@ -29,9 +35,10 @@ const projects = [
     </header>
 
     <div class="projects-grid">
-      {projects.map(project => (
-        <a href={`/portfolio/${project.slug}/`} class="project-card">
+      {projects.map((project, index) => (
+        <a href={`/portfolio/${project.slug}/`} class="project-card" data-animate="fade-scale" style={`--delay: ${index * 0.1}s`}>
           <div class="project-image">
+            <div class="project-gradient" style={`background: ${project.gradient}`}></div>
             <img src={project.image} alt={project.titleEn} loading="lazy" decoding="async" />
           </div>
           <div class="project-info">
@@ -40,87 +47,194 @@ const projects = [
               <span class="en">{project.titleEn}</span>
               <span class="cn">{project.titleCn}</span>
             </h2>
+            <p class="project-desc">{project.description}</p>
+            <div class="project-tech">
+              {project.techStack.map(tech => (
+                <span class="tech-tag">{tech}</span>
+              ))}
+            </div>
           </div>
         </a>
       ))}
     </div>
 
+
   </div>
 </BaseLayout>
 
 <style>
+  /* 项目网格 */
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+    margin-top: var(--space-sm);
   }
 
   .project-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
     background: var(--card-bg);
-    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    padding: var(--card-padding);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    transition: var(--card-transition);
     overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.05);
-    transition: all 0.3s ease;
+    box-sizing: border-box;
   }
 
-  .project-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(255,255,255,0.2);
+  .project-card.animate-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 
   .project-image {
-    height: 220px;
+    position: relative;
+    height: 240px;
+    border-radius: calc(var(--card-radius) - 4px);
     overflow: hidden;
+    margin-bottom: var(--space-sm);
+  }
+
+  .project-gradient {
+    position: absolute;
+    inset: 0;
+    opacity: 0.25;
+    mix-blend-mode: overlay;
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  .project-card:hover .project-gradient {
+    opacity: 0.4;
+  }
+
+  .project-card:hover {
+    transform: translateY(var(--card-hover-lift));
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
   }
 
   .project-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: transform 0.6s var(--ease-out-expo);
   }
 
   .project-card:hover .project-image img {
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 
   .project-info {
-    padding: 24px;
+    padding: 0;
   }
 
   .project-category {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+    display: inline-block;
     font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+    transition: color 0.3s ease;
+  }
+
+  .project-card:hover .project-category {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .project-title {
-    margin-top: 8px;
+    margin: 0 0 var(--space-xs) 0;
   }
 
   .project-title .en {
-    font-size: 1.2rem;
-    font-weight: 500;
     display: block;
+    font-size: var(--type-title);
+    font-weight: 400;
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+    margin-bottom: 4px;
+    transition: color 0.3s ease;
   }
 
   .project-title .cn {
-    font-size: 0.9rem;
-    margin-top: 4px;
-    color: var(--text-muted);
     display: block;
+    font-size: var(--type-body-tight);
+    color: var(--text-muted);
+    font-weight: 400;
+    transition: color 0.3s ease;
+  }
+
+  .project-desc {
+    font-size: var(--control-font);
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: var(--space-xs);
+  }
+
+  .project-tech {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs);
+  }
+
+  .tech-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+  }
+
+  .project-card:hover .tech-tag {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .project-card:hover .project-title .en {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .project-card:hover .project-title .cn {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .projects-grid {
+      gap: 24px;
+    }
+
+    .project-image {
+      height: 200px;
+    }
   }
 
   @media (max-width: 768px) {
     .projects-grid {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 24px;
+      margin-top: 12px;
     }
 
     .project-image {
-      height: 180px;
+      height: 200px;
+      border-radius: 12px;
+    }
+
+    .project-title .en {
+      font-size: 1.15rem;
     }
   }
 </style>

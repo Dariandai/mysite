@@ -6,20 +6,21 @@ interface Props {
 
 const {
   title = 'Dar1an | Portfolio and others',
-  description = 'UI/UX Designer \& Developer - Exploring the boundaries between design and code.'
+  description = 'UI/UX Designer & Developer - Exploring the boundaries between design and code.'
 } = Astro.props;
 
+const isHomePage = Astro.url.pathname === '/';
+const showBackButton = !isHomePage;
+const isProjectDetailPage =
+  Astro.url.pathname.startsWith('/portfolio/') && Astro.url.pathname !== '/portfolio/';
+const pageKind = isProjectDetailPage ? 'project' : isHomePage ? 'home' : 'site';
 const navItems = [
-  { id: 'home', en: 'Home', cn: '主页', url: '/#home' },
+  { id: 'home', en: 'Home', cn: '主页', url: '/' },
   { id: 'about', en: 'About', cn: '关于', url: '/about/' },
   { id: 'blog', en: 'Blog', cn: '博客', url: '/blog/' },
   { id: 'portfolio', en: 'Works', cn: '作品', url: '/portfolio/' },
   { id: 'share', en: 'Share', cn: '分享', url: '/share/' }
 ];
-
-// 判断当前页面是否需要显示返回按钮（非首页）
-const isHomePage = Astro.url.pathname === '/';
-const showBackButton = !isHomePage;
 ---
 
 <!DOCTYPE html>
@@ -28,6 +29,23 @@ const showBackButton = !isHomePage;
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content={description}>
+  <link rel="canonical" href={Astro.url.href}>
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={Astro.url.href}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content={Astro.url.href}>
+  <meta property="twitter:title" content={title}>
+  <meta property="twitter:description" content={description}>
+  <meta property="twitter:image" content="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png">
+
+  <meta name="author" content="Dar1an (Darian)">
+  <meta name="keywords" content="developer, designer, portfolio, web development, UI/UX, Python, JavaScript">
+  <meta name="theme-color" content="#050505">
   <title>{title}</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <!-- Performance: Preconnect to critical domains -->
@@ -50,13 +68,12 @@ const showBackButton = !isHomePage;
   </style>
   <!-- Typography: Syne (display/headings) + DM Sans (body) + Space Mono (labels) -->
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <!-- Remix Icon with preload -->
-  <link rel="preload" href="https://unpkg.com/remixicon@3.7.0/fonts/remixicon.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Remix Icon -->
   <link rel="stylesheet" href="https://unpkg.com/remixicon@3.7.0/fonts/remixicon.css">
   <!-- GSAP for smooth scroll animations - async load -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" defer></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" defer></script>
   <style is:global>
     @import '../styles/global.css'; /* v3 */
   </style>
@@ -65,7 +82,7 @@ const showBackButton = !isHomePage;
     .back-button-fixed {
       position: fixed;
       top: 100px;
-      left: 40px;
+      left: 20px;
       z-index: 999;
       display: flex;
       flex-direction: column;
@@ -109,9 +126,15 @@ const showBackButton = !isHomePage;
       }
     }
 
-    /* Tablet - show fixed back button */
-    @media (min-width: 769px) {
+    /* Tablet and below: show nav back button, hide fixed back button */
+    @media (max-width: 1024px) {
       .back-button-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .back-button-fixed {
         display: none !important;
       }
     }
@@ -139,7 +162,7 @@ const showBackButton = !isHomePage;
       color: var(--text-main);
     }
 
-    /* Mobile: show nav back button, hide fixed back button */
+    /* Mobile: additional nav adjustments */
     @media (max-width: 768px) {
       .back-button-nav {
         display: flex;
@@ -163,7 +186,7 @@ const showBackButton = !isHomePage;
     }
   </style>
 </head>
-<body>
+<body data-page={pageKind}>
   <!-- Navigation -->
   <header id="navbar">
     <div class="nav-left">
@@ -173,7 +196,6 @@ const showBackButton = !isHomePage;
         </button>
       )}
       <a href="/" class="logo">
-        <img src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" alt="Avatar">
         <span>Dar1an</span>
       </a>
     </div>
@@ -197,14 +219,20 @@ const showBackButton = !isHomePage;
     </nav>
 
     <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" aria-label="Menu" onclick="toggleMobileMenu()">
+    <button
+      class="mobile-menu-btn"
+      aria-label="Menu"
+      aria-controls="mobile-nav"
+      aria-expanded="false"
+      onclick="toggleMobileMenu()"
+    >
       <i class="ri-menu-line" id="menu-icon-open"></i>
       <i class="ri-close-line" id="menu-icon-close" style="display: none;"></i>
     </button>
   </header>
 
   <!-- Mobile Navigation Drawer -->
-  <nav class="mobile-nav" id="mobile-nav">
+  <nav class="mobile-nav" id="mobile-nav" aria-hidden="true" inert>
     <button class="mobile-nav-close" aria-label="Close menu" onclick="closeMobileMenu()">
       <i class="ri-close-line"></i>
     </button>
@@ -250,6 +278,50 @@ const showBackButton = !isHomePage;
   </main>
 
   <script>
+    // Keep body page-kind in sync across client-side navigations.
+    function syncPageKind() {
+      const path = window.location.pathname;
+      const isProject =
+        path.startsWith('/portfolio/') &&
+        path !== '/portfolio/' &&
+        path !== '/portfolio';
+      const isHome = path === '/';
+      document.body.dataset.page = isProject ? 'project' : isHome ? 'home' : 'site';
+    }
+    syncPageKind();
+    document.addEventListener('astro:page-load', syncPageKind);
+    document.addEventListener('astro:after-swap', syncPageKind);
+
+    // Platform class flags for browser/OS-specific CSS fallbacks
+    (() => {
+      const ua = navigator.userAgent;
+      const root = document.documentElement;
+      const isTouchMac = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || isTouchMac;
+      const isAndroid = /Android/.test(ua);
+      const isSafari = /^((?!chrome|android|crios|fxios|edgios).)*safari/i.test(ua);
+      const isFirefox = /Firefox|FxiOS/i.test(ua);
+      const isEdge = /Edg|EdgiOS|EdgA/i.test(ua);
+      const isQuark = /Quark/i.test(ua);
+      const isWechat = /MicroMessenger/i.test(ua);
+      const isWeibo = /Weibo/i.test(ua);
+      const isDouyin = /aweme|douyin/i.test(ua);
+      const isToutiao = /NewsArticle|Toutiao/i.test(ua);
+      const isQQ = /QQ\//i.test(ua) && !/MQQBrowser/i.test(ua);
+      const isAlipay = /AlipayClient/i.test(ua);
+      const isBaiduApp = /baiduboxapp/i.test(ua);
+      const isInAppBrowser =
+        isWechat || isWeibo || isDouyin || isToutiao || isQQ || isAlipay || isBaiduApp;
+
+      if (isIOS) root.classList.add('ua-ios');
+      if (isAndroid) root.classList.add('ua-android');
+      if (isSafari) root.classList.add('ua-safari');
+      if (isFirefox) root.classList.add('ua-firefox');
+      if (isEdge) root.classList.add('ua-edge');
+      if (isQuark) root.classList.add('ua-quark');
+      if (isInAppBrowser) root.classList.add('ua-inapp');
+    })();
+
     // Navbar scroll effect
     const header = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
@@ -266,16 +338,26 @@ const showBackButton = !isHomePage;
       const overlay = document.getElementById('mobile-nav-overlay');
       const menuIconOpen = document.getElementById('menu-icon-open');
       const menuIconClose = document.getElementById('menu-icon-close');
+      const menuButton = document.querySelector('.mobile-menu-btn');
       const body = document.body;
 
       if (mobileNav?.classList.contains('active')) {
         closeMobileMenu();
       } else {
         mobileNav?.classList.add('active');
+        mobileNav?.setAttribute('aria-hidden', 'false');
+        mobileNav?.removeAttribute('inert');
         overlay?.classList.add('active');
         if (menuIconOpen) menuIconOpen.style.display = 'none';
         if (menuIconClose) menuIconClose.style.display = 'block';
+        menuButton?.setAttribute('aria-expanded', 'true');
+        const previousOverflow = body.style.overflow;
+        body.dataset.prevOverflow = previousOverflow;
         body.style.overflow = 'hidden';
+
+        // Move focus into the drawer for keyboard/screen-reader flow.
+        const closeBtn = mobileNav?.querySelector('.mobile-nav-close');
+        if (closeBtn instanceof HTMLElement) closeBtn.focus();
       }
     }
 
@@ -284,18 +366,29 @@ const showBackButton = !isHomePage;
       const overlay = document.getElementById('mobile-nav-overlay');
       const menuIconOpen = document.getElementById('menu-icon-open');
       const menuIconClose = document.getElementById('menu-icon-close');
+      const menuButton = document.querySelector('.mobile-menu-btn');
       const body = document.body;
 
+      // If focus is inside drawer, move it out before hiding from AT.
+      const activeEl = document.activeElement;
+      if (mobileNav?.contains(activeEl) && menuButton instanceof HTMLElement) {
+        menuButton.focus();
+      }
+
       mobileNav?.classList.remove('active');
+      mobileNav?.setAttribute('aria-hidden', 'true');
+      mobileNav?.setAttribute('inert', '');
       overlay?.classList.remove('active');
       if (menuIconOpen) menuIconOpen.style.display = 'block';
       if (menuIconClose) menuIconClose.style.display = 'none';
-      body.style.overflow = '';
+      menuButton?.setAttribute('aria-expanded', 'false');
+      body.style.overflow = body.dataset.prevOverflow ?? '';
+      delete body.dataset.prevOverflow;
     }
 
     // Make mobile menu functions available globally
-    (window as any).toggleMobileMenu = toggleMobileMenu;
-    (window as any).closeMobileMenu = closeMobileMenu;
+    window.toggleMobileMenu = toggleMobileMenu;
+    window.closeMobileMenu = closeMobileMenu;
 
     // Close mobile menu on window resize (if switching to desktop)
     window.addEventListener('resize', () => {
@@ -316,7 +409,49 @@ const showBackButton = !isHomePage;
     }
 
     // Make goBack available globally
-    (window as any).goBack = goBack;
+    window.goBack = goBack;
+
+    // Global Animation Observer - Enhanced v4
+    // Uses requestIdleCallback for better performance and staggered animations
+    const animationObserverOptions = {
+      root: null,
+      rootMargin: '0px 0px -10% 0px',
+      threshold: [0, 0.1, 0.5]
+    };
+
+    const animationObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const target = entry.target;
+        if (entry.isIntersecting && target instanceof HTMLElement && !target.classList.contains('animate-in')) {
+          // Get delay from data attribute
+          const delay = parseInt(target.dataset.delay || '0', 10) * 100;
+
+          setTimeout(() => {
+            target.classList.add('animate-in');
+          }, delay);
+
+          // Stop observing this element
+          animationObserver.unobserve(target);
+        }
+      });
+    }, animationObserverOptions);
+
+    // Initialize animations
+    function initAnimations() {
+      const animatedElements = document.querySelectorAll('[data-animate]:not(.animate-in)');
+      animatedElements.forEach(el => animationObserver.observe(el));
+    }
+
+    // Observe on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAnimations);
+    } else {
+      initAnimations();
+    }
+
+    // Re-initialize on Astro page transitions
+    document.addEventListener('astro:page-load', initAnimations);
+    document.addEventListener('astro:after-swap', initAnimations);
   </script>
 </body>
 </html>

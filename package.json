@@ -6,14 +6,27 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "check": "astro check",
+    "lint": "eslint . --ext .js,.ts,.astro",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.12",
-    "astro": "^5.17.1"
+    "@astrojs/cloudflare": "^13.2.0",
+    "astro": "^6.1.9"
   },
   "devDependencies": {
+    "@astrojs/check": "0.9.8",
     "@tailwindcss/vite": "^4.2.1",
-    "tailwindcss": "^4.2.1"
+    "@typescript-eslint/eslint-plugin": "^8.59.0",
+    "@typescript-eslint/parser": "^8.59.0",
+    "astro-eslint-parser": "^1.4.0",
+    "eslint": "8.57.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "tailwindcss": "^4.2.1",
+    "typescript": "5.9.3"
   }
 }

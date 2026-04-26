@@ -36,7 +36,7 @@ const works = [
         titleEn: 'System UI',
         titleCn: '后台数据可视化界面',
         image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2670&auto=format&fit=crop',
-        url: '/portfolio/'
+        url: '/portfolio/system-ui/'
     }
 ];
 
@@ -56,15 +56,15 @@ const skills = [
 
 <BaseLayout>
     <!-- 1. 主页 (Home) -->
-    <section id="home">
+    <section id="home" aria-label="Home section">
         <div class="hero-text">
             <div class="hero-label">
                 <span class="en">WORK IN PROGRESS &amp; DEVELOPER</span>
             </div>
             <h1 class="en">Hello,<br>I'm Darian<span class="hero-cn-inline">·代宇</span></h1>
-            <div class="text-group" style="margin-top: 20px;">
-                <p class="en" style="color: var(--text-muted); font-size: 1rem; line-height: 1.7; max-width: 420px;">Finding my way and digging deep into how things work. Training for the long game.</p>
-                <p class="cn" style="margin-top: 6px;">探索技术之径，穷理事物之微，修身砺志赴远。</p>
+            <div class="text-group hero-intro">
+                <p class="en hero-intro-en">Finding my way and digging deep into how things work. Training for the long game.</p>
+                <p class="cn hero-intro-cn">探索技术之径，穷理事物之微，修身砺志赴远。</p>
             </div>
 
             <a href="/portfolio/" class="btn-connect">
@@ -74,34 +74,41 @@ const skills = [
         </div>
 
         <div class="hero-img">
-            <img src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png" alt="Personal Photo">
+            <img
+                src="https://img.dar1an.dpdns.org/Picgo/2025/12-02-20-24-54.png"
+                alt="Darian portrait"
+                fetchpriority="high"
+                decoding="async"
+                width="800"
+                height="1200"
+            >
         </div>
     </section>
 
     <!-- 2. 关于 (About) -->
-    <section id="about">
+    <section id="about" aria-label="Skills and tools section">
         <h2 class="section-title">
             <span class="sub">Skills & Tools / 技能与工具</span>
             <div class="text-group">
                 <a href="/about/" class="section-link">
                     <span class="en">What I Do</span>
-                    <span class="cn" style="font-size: 1.2rem;">我的技能栈</span>
+                    <span class="cn section-title-cn">我的技能栈</span>
                 </a>
             </div>
         </h2>
-        <div class="skills-grid">
-            {skills.map(skill => (
-                <div class="card">
-                    <div class="card-header">
+        <div class="content-grid skills-grid-home" role="list">
+            {skills.map((skill, index) => (
+                <article class="unified-card skill-card" data-animate="fade-up" data-delay={index + 1} role="listitem">
+                    <div class="card-icon-header">
                         <i class={skill.icon}></i>
                         <span>{skill.category}</span>
                     </div>
-                    <ul class="card-list">
+                    <ul class="card-items">
                         {skill.items.map(item => (
                             <li>{item}</li>
                         ))}
                     </ul>
-                </div>
+                </article>
             ))}
         </div>
         <div class="skills-cta">
@@ -113,51 +120,56 @@ const skills = [
     </section>
 
     <!-- 3. 博客 (Blog) -->
-    <section id="blog">
+    <section id="blog" aria-label="Blog articles section">
         <h2 class="section-title">
             <span class="sub">Thinking / 思考</span>
             <div class="text-group">
                 <a href="/blog/" class="section-link">
                     <span class="en">Latest Articles</span>
-                    <span class="cn" style="font-size: 1.2rem;">最新博客文章</span>
+                    <span class="cn section-title-cn">最新博客文章</span>
                 </a>
             </div>
         </h2>
-        <div class="skills-grid">
-            {blogPosts.map(post => (
-                <a href={post.url} class="card blog-card">
-                    <div class="card-header">
-                        <i class="ri-article-line"></i>
-                        <span>{post.date}</span>
+        <div class="content-grid blog-grid-home" role="list">
+            {blogPosts.map((post, index) => (
+                <a href={post.url} class="unified-card blog-card-home" data-animate="fade-up" data-delay={index + 1} role="listitem">
+                    <div class="card-meta">
+                        <span class="card-num">{String(index + 1).padStart(2, '0')}</span>
+                        <span class="card-date">{post.date}</span>
                     </div>
-                    <div class="text-group">
-                        <span class="en" style="font-weight: 500; font-size: 1.1rem;">{post.titleEn}</span>
-                        <span class="cn" style="margin-top: 6px;">{post.titleCn}</span>
+                    <div class="card-titles">
+                        <span class="title-en">{post.titleEn}</span>
+                        <span class="title-cn">{post.titleCn}</span>
                     </div>
-                    <p class="cn" style="margin-top: 12px; font-size: 0.9rem;">{post.excerpt}</p>
+                    <p class="card-excerpt">{post.excerpt}</p>
                 </a>
             ))}
         </div>
     </section>
 
     <!-- 3. 作品 (Works) -->
-    <section id="portfolio">
+    <section id="portfolio" aria-label="Portfolio showcase section">
         <h2 class="section-title">
             <span class="sub">Selected Works / 作品集</span>
             <div class="text-group">
                 <a href="/portfolio/" class="section-link">
                     <span class="en">Portfolio Showcase</span>
-                    <span class="cn" style="font-size: 1.2rem;">精选项目展示</span>
+                    <span class="cn section-title-cn">精选项目展示</span>
                 </a>
             </div>
         </h2>
-        <div class="works-gallery">
-            {works.map(work => (
-                <a href={work.url} class="work-item">
-                    <img src={work.image} alt={work.titleEn}>
-                    <div class="work-info text-group">
-                        <h4 class="en">{work.titleEn}</h4>
-                        <p class="cn">{work.titleCn}</p>
+        <div class="content-grid works-grid-home" role="list">
+            {works.map((work, index) => (
+                <a href={work.url} class="unified-card work-card" data-animate="fade-up" data-delay={index + 1} role="listitem">
+                    <div class="work-image-wrapper">
+                        <img src={work.image} alt={work.titleEn} loading="lazy" decoding="async" width="600" height="400" />
+                    </div>
+                    <div class="work-info">
+                        <span class="work-category">PROJECT</span>
+                        <div class="work-titles">
+                            <span class="title-en">{work.titleEn}</span>
+                            <span class="title-cn">{work.titleCn}</span>
+                        </div>
                     </div>
                 </a>
             ))}
@@ -165,27 +177,27 @@ const skills = [
     </section>
 
     <!-- 4. 分享 (Share) -->
-    <section id="share">
+    <section id="share" aria-label="Tools and resources section">
         <h2 class="section-title">
             <span class="sub">Tools & Resources / 工具资源</span>
             <div class="text-group">
                 <a href="/share/" class="section-link">
                     <span class="en">Worth Sharing</span>
-                    <span class="cn" style="font-size: 1.2rem;">好用的工具与网站推荐</span>
+                    <span class="cn section-title-cn">好用的工具与网站推荐</span>
                 </a>
             </div>
         </h2>
 
-        <div class="skills-grid">
-            {tools.map(tool => (
-                <a href="/share/" class="card tool-card">
-                    <div class="card-header">
+        <div class="content-grid tools-grid-home" role="list">
+            {tools.map((tool, index) => (
+                <a href="/share/" class="unified-card tool-card" data-animate="fade-up" data-delay={index + 1} role="listitem">
+                    <div class="tool-icon-wrapper">
                         <i class={tool.icon}></i>
-                        <span>{tool.name}</span>
                     </div>
-                    <ul class="card-list">
-                        <li>{tool.desc}</li>
-                    </ul>
+                    <div class="tool-content">
+                        <span class="tool-name">{tool.name}</span>
+                        <span class="tool-desc">{tool.desc}</span>
+                    </div>
                 </a>
             ))}
         </div>
@@ -201,43 +213,11 @@ const skills = [
 
 <script>
     // 使用统一的堆叠卡片模块
-    import { initStackingCards } from '/src/scripts/stacking-cards.js';
+    import { initStackingCards } from '../scripts/stacking-cards.js';
 
     const sectionOrder = ['home', 'about', 'blog', 'portfolio', 'share'];
-
     initStackingCards({
         sections: 'section',
-        sectionOrder: sectionOrder,
-        onSectionChange: (index) => {
-            updateNavHighlight(sectionOrder[index]);
-        }
-    });
-
-    // 导航高亮更新
-    function updateNavHighlight(activeId) {
-        document.querySelectorAll('.nav-anchor').forEach(anchor => {
-            if (anchor.getAttribute('data-target') === activeId) {
-                anchor.classList.add('active');
-            } else {
-                anchor.classList.remove('active');
-            }
-        });
-    }
-
-    // 导航点击事件
-    document.querySelectorAll('.nav-anchor').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            const href = this.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                e.preventDefault();
-                const targetId = this.getAttribute('data-target');
-                const targetIndex = sectionOrder.indexOf(targetId || '');
-                // 获取实例并滚动到指定section
-                const instance = window.stackingCardsInstance;
-                if (instance && targetIndex >= 0) {
-                    instance.scrollToSection(targetIndex);
-                }
-            }
-        });
+        sectionOrder: sectionOrder
     });
 </script>
