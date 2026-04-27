@@ -8,7 +8,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <section id="overview" class="project-section" aria-label="Project overview">
       <div class="section-scroll-content">
         <header class="project-header-unified">
-          <span class="project-category">Python / Desktop App / RAG</span>
+          <span class="project-category">Tauri / FastAPI / Hybrid Search / RAG</span>
           <h1 class="project-title">
             <span class="en">File Tools</span>
             <span class="cn">本地文件智能检索与问答系统</span>
@@ -24,13 +24,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           />
         </div>
         <div class="project-intro-unified">
-          <p>随着本地文件数量快速增长和隐私保护需求增强，开发的一款完全离线运行的智能文件检索工具。结合快速文件索引技术和本地/在线大语言模型，实现高效的文件搜索、内容问答和个性化推荐功能。</p>
+          <p>FileTools 是一款面向海量本地文件的智能检索与问答工具，强调本地优先与隐私安全。通过混合检索（BM25 + 语义向量）和 RAG 问答流程，用户可以用自然语言快速定位文件并获得可溯源回答。</p>
           <div class="tech-tags-unified">
             <span>FastAPI</span>
-            <span>Pywebview</span>
+            <span>Tauri 2.x</span>
+            <span>Rust</span>
             <span>Tantivy</span>
             <span>HNSWLib</span>
-            <span>llama-cpp-python</span>
+            <span>fastembed</span>
           </div>
         </div>
       </div>
@@ -47,7 +48,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
           <div class="info-card">
             <h3>桌面端</h3>
-            <p>Pywebview 封装 Web 界面为原生窗口，避免浏览器跨域限制，体验更接近传统软件</p>
+            <p>Tauri 2.x（Rust）封装桌面应用，使用 WebView2 提供轻量前端容器，支持系统托盘与桌面级分发</p>
           </div>
           <div class="info-card">
             <h3>检索引擎</h3>
@@ -55,7 +56,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </div>
           <div class="info-card">
             <h3>AI 能力</h3>
-            <p>FastEmbed 生成文档向量，llama-cpp-python 本地加载 GGUF 模型，支持 Phi、Qwen、Llama 等</p>
+            <p>FastEmbed 生成向量，支持本地模型（Ollama / llama.cpp / LM Studio）与远程 API（SiliconFlow / DeepSeek / Custom）</p>
           </div>
         </div>
 
@@ -63,11 +64,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <h3>项目架构</h3>
           <div class="arch-diagram-unified">
             <div class="arch-layer">
-              <div class="arch-box">用户界面层<br><small>Pywebview + Bootstrap</small></div>
+              <div class="arch-box">用户界面层<br><small>Tauri + WebView2</small></div>
             </div>
             <div class="arch-arrow">↓</div>
             <div class="arch-layer">
-              <div class="arch-box">API 接口层<br><small>FastAPI 模块化路由</small></div>
+              <div class="arch-box">API 接口层<br><small>FastAPI (Port 18642)</small></div>
             </div>
             <div class="arch-arrow">↓</div>
             <div class="arch-layer">
@@ -89,15 +90,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="content-cards-grid three-cols">
           <div class="info-card">
             <h3>混合检索</h3>
-            <p>关键词检索（Tantivy BM25）+ 语义检索（HNSWLib），按权重融合排序</p>
+            <p>关键词检索（Tantivy BM25）+ 语义检索（HNSWLib），通过 RRF 融合排序提升召回与相关性</p>
           </div>
           <div class="info-card">
             <h3>智能问答</h3>
-            <p>RAG 流程，先检索相关文档片段，再让 LLM 生成答案，带引用溯源</p>
+            <p>RAG 流程先检索证据片段，再生成回答并附来源引用，便于核验</p>
           </div>
           <div class="info-card">
             <h3>多格式支持</h3>
-            <p>PDF、Word、Excel、PPT、Markdown 等常见办公文档</p>
+            <p>支持 PDF、Word、Excel、PPT、Markdown、TXT、CSV，并可扩展 OCR 文本提取</p>
           </div>
           <div class="info-card">
             <h3>实时监控</h3>
@@ -124,7 +125,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             <div class="step-num">1</div>
             <div class="step-content">
               <h4>检索</h4>
-              <p>用户提问后，先用嵌入模型转成向量，在 HNSW 索引里找 Top-K 相似文档；同时用 Tantivy 做关键词匹配。两个分数按权重（默认 6:4）融合，重排序后取最相关的片段。</p>
+            <p>用户提问后，先进行语义向量召回（HNSW）与关键词召回（BM25），再通过 RRF 融合排序，得到最相关的文档片段。</p>
             </div>
           </div>
           <div class="step-item">
@@ -152,19 +153,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="col">
             <h2 class="section-title-unified">安装与启动</h2>
             <div class="code-block-unified">
-              <pre><code># 克隆项目
-git clone https://github.com/Dry-U/File-tools.git
+              <pre><code># 用户推荐：从 Releases 下载桌面安装包
+# Windows: NSIS / MSI
+# macOS: DMG
+# Linux: AppImage / DEB
+https://github.com/Dariandai/File-tools/releases
+
+# 开发者从源码启动
+git clone https://github.com/Dariandai/File-tools.git
 cd File-tools
-
-# 安装依赖（推荐 uv）
-uv sync
-
-# 启动应用
-uv run python main.py</code></pre>
+uv sync && npm install
+npm run tauri dev</code></pre>
             </div>
             <ul class="feature-list-unified">
               <li>启动后自动打开桌面窗口</li>
-              <li>API 服务运行在 127.0.0.1:8000</li>
+              <li>API 服务默认监听在 127.0.0.1:18642</li>
               <li>支持 Windows / macOS / Linux</li>
             </ul>
           </div>
@@ -176,9 +179,12 @@ ai_model:
   enabled: true
   mode: "api"  # 或 "local"
   api:
-    provider: "siliconflow"
-    api_key: "your-api-key"
+    provider: "siliconflow"  # 也支持 deepseek / custom
+    api_url: "https://api.siliconflow.cn/v1/chat/completions"
     model_name: "deepseek-ai/DeepSeek-V2.5"
+    keys:
+      siliconflow: "your-key"
+      deepseek: "your-key"
 
 file_scanner:
   scan_paths:
@@ -195,18 +201,30 @@ file_scanner:
         <div class="github-section-unified">
           <div class="github-content">
             <h2 class="section-title-unified">开源项目</h2>
-            <p class="github-desc">File Tools 是一个开源项目，欢迎提交 Issue 和 Pull Request！</p>
+            <p class="github-desc">FileTools 持续迭代中（最新发布 v1.1.2），欢迎提交 Issue 和 Pull Request。</p>
             <div class="github-stats">
               <div class="github-stat-item">
                 <i class="ri-github-fill"></i>
-                <span>Dry-U/File-tools</span>
+                <span>Dariandai/File-tools</span>
+              </div>
+              <div class="github-stat-item">
+                <i class="ri-rocket-fill"></i>
+                <span>Latest: v1.1.2 (2026-04)</span>
+              </div>
+              <div class="github-stat-item">
+                <i class="ri-shield-check-fill"></i>
+                <span>License: MIT</span>
               </div>
             </div>
           </div>
           <div class="github-link">
-            <a href="https://github.com/Dry-U/File-tools" target="_blank" rel="noopener noreferrer" class="btn-primary-unified">
+            <a href="https://github.com/Dariandai/File-tools" target="_blank" rel="noopener noreferrer" class="btn-primary-unified">
               <i class="ri-github-fill"></i>
               <span>View on GitHub</span>
+            </a>
+            <a href="https://github.com/Dariandai/File-tools/releases" target="_blank" rel="noopener noreferrer" class="btn-primary-unified">
+              <i class="ri-download-2-fill"></i>
+              <span>Download Releases</span>
             </a>
           </div>
         </div>

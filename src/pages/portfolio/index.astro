@@ -4,13 +4,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 const projects = [
   {
     slug: 'project-alpha',
-    titleEn: 'File Tools',
+    titleEn: 'FileTools',
     titleCn: '本地文件智能检索与问答',
-    category: 'Python / RAG',
+    category: 'Tauri / FastAPI / RAG',
     image: 'https://img.dar1an.dpdns.org/Picgo/2026/03-09-02-46-33.png',
     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    description: '基于 RAG 技术实现的本地文件智能检索与问答系统，支持多种文档格式。',
-    techStack: ['Python', 'PyTorch', 'LangChain', 'FastAPI']
+    description: '本地优先的智能文件检索与问答系统，采用 BM25 + 向量检索 + RRF 融合排序，支持可溯源 RAG 问答。',
+    techStack: ['Tauri 2.x', 'FastAPI', 'Tantivy', 'HNSWLib', 'fastembed']
   },
   {
     slug: 'system-ui',

@@ -21,7 +21,7 @@ export const GET: APIRoute = () => {
 ${pages
   .map(
     (page) => `  <url>
-    <loc>https://dar1an.pages.dev/${page.url}</loc>
+    <loc>https://dar1an.dpdns.org/${page.url}</loc>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
     <lastmod>${today}</lastmod>
