@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://dar1an.pages.dev/sitemap.xml
+Sitemap: https://dar1an.dpdns.org/sitemap.xml
