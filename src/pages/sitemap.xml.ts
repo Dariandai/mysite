@@ -10,6 +10,7 @@ const pages = [
   { url: 'blog/luo-yonghao-liu-qian', changefreq: 'monthly', priority: 0.6 },
   { url: 'blog/local-ai', changefreq: 'monthly', priority: 0.6 },
   { url: 'blog/digital-garden', changefreq: 'monthly', priority: 0.6 },
+  { url: 'blog/AI%E7%BD%91%E7%BB%9C%E4%B8%8E%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%B7%A5%E5%85%B7%E6%8C%87%E5%8D%97', changefreq: 'monthly', priority: 0.6 },
   { url: 'portfolio/project-alpha', changefreq: 'monthly', priority: 0.7 },
   { url: 'portfolio/system-ui', changefreq: 'monthly', priority: 0.7 },
 ];

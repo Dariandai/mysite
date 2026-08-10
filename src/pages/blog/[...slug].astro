@@ -36,6 +36,42 @@ const { Content } = post;
   </article>
 </BaseLayout>
 
+<script>
+  const initMermaid = async () => {
+    const blocks = document.querySelectorAll('pre[data-language="mermaid"]');
+    if (!blocks.length) return;
+
+    const { default: mermaid } = await import('mermaid');
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'dark',
+      securityLevel: 'strict',
+    });
+
+    for (const block of blocks) {
+      const pre = block;
+      const code = pre.querySelector('code');
+      const source = code ? code.textContent : '';
+      const id = `mermaid-${Math.random().toString(36).slice(2, 8)}`;
+      try {
+        const { svg } = await mermaid.render(id, source);
+        pre.innerHTML = svg;
+        pre.classList.add('mermaid-box');
+        pre.removeAttribute('data-language');
+        pre.setAttribute('style', 'background: transparent');
+      } catch (err) {
+        console.error('[mermaid] 渲染失败:', err);
+      }
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMermaid);
+  } else {
+    initMermaid();
+  }
+</script>
+
 <style>
   .blog-post {
     padding: 100px 10% 50px 140px;
@@ -124,6 +160,19 @@ const { Content } = post;
 
   .post-content :global(li) {
     margin-bottom: 0.5em;
+  }
+
+  .post-content :global(pre.mermaid-box) {
+    background: transparent;
+    padding: 0;
+    overflow-x: auto;
+  }
+
+  .post-content :global(pre.mermaid-box svg) {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   .post-footer {

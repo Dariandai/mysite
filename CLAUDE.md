@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Astro 5 portfolio website deployed to Cloudflare Pages. Features a dark minimalist design with stacking-cards scroll system (GSAP ScrollTrigger), bilingual support (Chinese/English), and responsive layouts.
+Astro 6 portfolio website deployed to Cloudflare Pages. Features a dark minimalist design with stacking-cards scroll system (GSAP ScrollTrigger), bilingual support (Chinese/English), and responsive layouts.
 
 ## Commands
 
@@ -48,14 +48,15 @@ Dark theme with CSS variables in `src/styles/global.css`:
 - `/` — Homepage with stacking sections (Home, About, Blog, Portfolio, Share)
 - `/about/` — Fishbone timeline + Skills grid
 - `/blog/` — Article list with normal scroll
-- `/blog/[slug]/` — Dynamic blog post pages
+- `/blog/[...slug]/` — Dynamic blog post pages (catch-all, drives off `src/content/posts/*.md`)
 - `/portfolio/` — Project cards grid
 - `/portfolio/project-alpha/` and `/portfolio/system-ui/` — Individual project pages
 - `/share/` — Tools & resources grid
+- `/sitemap.xml` — Hand-rolled sitemap in `src/pages/sitemap.xml.ts`
 
 ### Content
 
-Blog posts in `src/content/posts/*.md` using Astro content collections with frontmatter for title, date, description.
+Blog posts in `src/content/posts/*.md` using Astro content collections with frontmatter for title, titleCn, date, description, tags. Date normalization is handled in `src/content.config.ts` (accepts `YYYY-M-D`, ISO datetime, and unix-time).
 
 ## Vite HMR on Windows
 
