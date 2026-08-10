@@ -72,8 +72,6 @@ const navItems = [
   <link rel="stylesheet" href="https://unpkg.com/remixicon@3.7.0/fonts/remixicon.css">
   <!-- GSAP for smooth scroll animations - async load -->
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js" defer></script>
   <style is:global>
     @import '../styles/global.css'; /* v3 */
   </style>
@@ -278,6 +276,10 @@ const navItems = [
   </main>
 
   <script>
+    // 卡片 v2 交互：鼠标光斑跟随 + 微 3D tilt（桌面端，全站统一）
+    import { initSkillCardEffects } from '../scripts/skill-cards.js';
+    initSkillCardEffects();
+
     // Keep body page-kind in sync across client-side navigations.
     function syncPageKind() {
       const path = window.location.pathname;

@@ -105,15 +105,12 @@ const categoryCounts: Record<string, number> = {
       tab.classList.add('active');
       if (tab instanceof HTMLElement) tab.setAttribute('aria-pressed', 'true');
       
-      // 过滤文章
+      // 过滤文章（用 class 控制，兼容移动端 grid !important）
       items.forEach(item => {
         const itemCategory = item.getAttribute('data-category');
+        const show = category === '全部' || itemCategory === category;
         if (item instanceof HTMLElement) {
-          if (category === '全部' || itemCategory === category) {
-            item.style.display = 'grid';
-          } else {
-            item.style.display = 'none';
-          }
+          item.classList.toggle('hidden', !show);
         }
       });
     });
@@ -208,6 +205,10 @@ const categoryCounts: Record<string, number> = {
   .blog-page .article-item.animate-in {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  .blog-page .article-item.hidden {
+    display: none !important;
   }
 
   .blog-page .article-item:hover {

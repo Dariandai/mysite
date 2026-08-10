@@ -8,7 +8,6 @@ module.exports = {
   },
   globals: {
     gsap: 'readonly',
-    ScrollTrigger: 'readonly',
   },
   parserOptions: {
     ecmaVersion: 'latest',

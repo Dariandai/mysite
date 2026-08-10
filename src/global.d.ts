@@ -20,5 +20,4 @@ declare global {
   }
 
   const gsap: GsapLike;
-  const ScrollTrigger: unknown;
 }

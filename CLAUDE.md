@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Astro 6 portfolio website deployed to Cloudflare Pages. Features a dark minimalist design with stacking-cards scroll system (GSAP ScrollTrigger), bilingual support (Chinese/English), and responsive layouts.
+Astro 6 portfolio website deployed to Cloudflare Pages. Features a dark minimalist design with a GSAP-driven stacking-cards scroll system, bilingual support (Chinese/English), and responsive layouts.
 
 ## Commands
 

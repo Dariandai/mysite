@@ -1,29 +1,36 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const blogPosts = [
-    {
-        date: '2026.03.03',
-        titleEn: 'Understanding the Brain',
-        titleCn: '认识大脑：为什么我总是想偷懒',
-        excerpt: '从脑科学角度理解拖延与焦虑，找到与自己和解的方法。',
-        url: '/blog/brain-science/'
-    },
-    {
-        date: '2026.02.24',
-        titleEn: 'The Two Types of Magic',
-        titleCn: '两种魔术：刘谦给罗永浩上的那堂课',
-        excerpt: '听完四小时播客，重新理解魔术的价值。',
-        url: '/blog/luo-yonghao-liu-qian/'
-    },
-    {
-        date: '2025.08.11',
-        titleEn: 'Running AI Locally',
-        titleCn: '在本地跑AI：从折腾到真香',
-        excerpt: 'WSL2 + llama.cpp/vLLM 部署踩坑记录。',
-        url: '/blog/local-ai/'
-    }
-];
+const allPosts = import.meta.glob('../content/posts/*.md', { eager: true });
+
+const parsePostDate = (d: unknown) => {
+  const m = String(d ?? '').match(/^(\d{4})[-.](\d{1,2})[-.](\d{1,2})/);
+  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime();
+  const t = new Date(String(d)).getTime();
+  return Number.isNaN(t) ? 0 : t;
+};
+
+const blogPosts = Object.values(allPosts)
+  .map((post: any) => {
+    const slug = post.file.split('/').pop()?.replace('.md', '') ?? '';
+    return {
+      date: String(post.frontmatter.date ?? '').slice(0, 10).replace(/-/g, '.'),
+      titleEn: post.frontmatter.title,
+      titleCn: post.frontmatter.titleCn,
+      excerpt: post.frontmatter.description,
+      url: `/blog/${slug}/`,
+      _ts: parsePostDate(post.frontmatter.date),
+    };
+  })
+  .sort((a: any, b: any) => b._ts - a._ts)
+  .slice(0, 3)
+  .map((post: any) => ({
+    date: post.date,
+    titleEn: post.titleEn,
+    titleCn: post.titleCn,
+    excerpt: post.excerpt,
+    url: post.url,
+  }));
 
 const works = [
     {
@@ -215,9 +222,7 @@ const skills = [
     // 使用统一的堆叠卡片模块
     import { initStackingCards } from '../scripts/stacking-cards.js';
 
-    const sectionOrder = ['home', 'about', 'blog', 'portfolio', 'share'];
     initStackingCards({
-        sections: 'section',
-        sectionOrder: sectionOrder
+        sections: 'section'
     });
 </script>
