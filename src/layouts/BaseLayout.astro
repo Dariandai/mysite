@@ -1,4 +1,6 @@
 ---
+import SignatureMark from '../components/SignatureMark.astro';
+
 interface Props {
   title?: string;
   description?: string;
@@ -193,8 +195,8 @@ const navItems = [
           <i class="ri-arrow-left-line"></i>
         </button>
       )}
-      <a href="/" class="logo">
-        <span>Dar1an</span>
+      <a href="/" class="logo" aria-label="Dar1an" title="Dar1an">
+        <SignatureMark />
       </a>
     </div>
     <nav class="nav-links">
@@ -279,6 +281,10 @@ const navItems = [
     // 卡片 v2 交互：鼠标光斑跟随 + 微 3D tilt（桌面端，全站统一）
     import { initSkillCardEffects } from '../scripts/skill-cards.js';
     initSkillCardEffects();
+
+    // 签名描边书写动画（getTotalLength + stroke-dashoffset）
+    import { initSignatureInk } from '../scripts/signature-ink.js';
+    initSignatureInk();
 
     // Keep body page-kind in sync across client-side navigations.
     function syncPageKind() {

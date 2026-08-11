@@ -390,6 +390,71 @@ img {
     transform: scale(1.02);
 }
 
+.logo-signature {
+    height: 36px;
+    width: auto;
+    display: block;
+    overflow: visible;
+    /* 描边书写动画期间保持轮廓光洁 */
+    shape-rendering: geometricPrecision;
+}
+
+/* 签名笔迹：non-scaling-stroke 保证粗细不随 SVG 缩放，避免细线 */
+.signature-path {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 3.5px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+}
+
+/* 底层墨迹光晕：更粗、半透明、微模糊，营造墨迹渗透感 */
+.signature-path--glow {
+    stroke-width: 7px;
+    opacity: 0.16;
+    filter: blur(1px);
+}
+
+/* 笔尖光点：r 用 CSS px 固定，不随 SVG 缩放 */
+.signature-pen {
+    r: 4px;
+    fill: #ffffff;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.85));
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+/* Retina / 高分屏：笔迹略粗以抵消像素密度 */
+@media (min-resolution: 2dppx) {
+    .signature-path {
+        stroke-width: 4px;
+    }
+    .signature-path--glow {
+        stroke-width: 8px;
+    }
+}
+
+/* 移动端：收窄笔迹 */
+@media (max-width: 768px) {
+    .signature-path {
+        stroke-width: 3px;
+    }
+    .signature-path--glow {
+        stroke-width: 6px;
+    }
+}
+
+/* 减弱动效：直接展示完整签名 */
+@media (prefers-reduced-motion: reduce) {
+    .signature-path {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
+
 .nav-links {
     display: flex;
     gap: 40px;
